@@ -1,9 +1,9 @@
 # Chippies
 
-<<<<<<< HEAD
+123 
+
 #TEST
 
-=======
 Project voor Algoritme & Heuristieken. Chips & Circuits
 
 # Auteurs
@@ -11,4 +11,4 @@ Project voor Algoritme & Heuristieken. Chips & Circuits
 Hidde Brenninkmeijer\
 Deniz Mermer\
 Julius Knops
->>>>>>> 29e7d78a083c9dbd91bb38f401ad673d75fabe8d
+
