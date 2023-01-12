@@ -3,8 +3,13 @@ Calculates the size of StateSpace for a given chip / grid.
 First calculates the sum of total number of combinations of placing 0 to number_of_nodes on the grid
 Second calculates the sum of total number of combinations of placing edges on the grid
 Third multiply values of both functions to get the total set of combinations possible
+
+Assumptions of placement:
+- Nodes can be placed on every layer of the chip
+- Segments of connection between nodes can cross
 """
 
+# libraries used to get faculty (!) and Decimal function to work with large values
 import math
 from decimal import *
 
