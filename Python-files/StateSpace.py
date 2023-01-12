@@ -18,6 +18,9 @@ length = 18
 width = 18
 height = 8
 
+p = 5**2023
+print(len(str(p)))
+
 # max number of nodes placed on chip
 number_of_nodes = 50
 
