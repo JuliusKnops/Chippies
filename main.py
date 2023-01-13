@@ -36,8 +36,8 @@ if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
     netlist_nr = 1 # loopt van 1 tot en met 3
 
-    netlist_file = f"Python-files/GatesAndNetlists/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-    print_file = f"Python-files/GatesAndNetlists/chip_{chip_nr}/print_{chip_nr}.csv"
+    netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
+    print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
     
     netlist = Netlist(netlist_file, print_file)
 
