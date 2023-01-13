@@ -58,14 +58,14 @@ class Node:
 def astar(grid, start, end):
     heap = []
 
-    # push first node into the heap
+    # push start node into the heap
     heapq.heappush(heap, (0, start))
 
     visited = set()
 
     # while there are still nodes to check...
     while heap:
-        # return smallest node from the heap stack
+        # return node with smallest cost from the heap stack
         current = heapq.heappop(heap)[1]
 
         # checks if goal node
