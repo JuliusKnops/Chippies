@@ -4,12 +4,13 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d 
 
 
-
 #Matplotlib hardcode suboptimal example chip 0
 fig = plt.figure()
 
 ax = fig.add_subplot(projection= "3d")
 ax.set_xlim(0, 7); ax.set_ylim(0, 7); ax.set_zlim(0, 7)
+
+# place gates 
 x = [1,6,4,6,3]
 y = [5,5,4,2,1]
 z = [0,0,0,0,0]
