@@ -5,6 +5,7 @@ from mpl_toolkits import mplot3d
 
 
 
+
 #Matplotlib hardcode suboptimal example chip 0
 fig = plt.figure()
 
