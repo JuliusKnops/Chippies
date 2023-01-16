@@ -3,6 +3,7 @@ class Gates(): # Overerven van Node class
         #super__init__(x, y)
         self.x = x_coordinate
         self.y = y_coordinate
+        self.z = 0
         self.name = name
         self.connections = set()
     
