@@ -129,6 +129,9 @@ class PathFinder(object):
                     # EDIT: Fixed by if statement 
                     main.Astar_netlist.used_nodes.add(node)
 
+                # Re-add gate
+                main.Astar_netlist.gate_locations.add( (destination_node.x, destination_node.y, destination_node.z) )
+
                 return path[::-1]
 
             # skip Node if already visited
@@ -176,6 +179,9 @@ class PathFinder(object):
 
                 # extend heap with new node
                 heapq.heappush(heap, (cost, Node(x, y, z, cost, current)))
+
+        # Re-add gate before raising exception
+        main.Astar_netlist.gate_locations.add( (destination_node.x, destination_node.y, destination_node.z) )
 
         # NOTE: If there is no valid pad raise exception for easier bugfixing.
         #       Else it returns None.
