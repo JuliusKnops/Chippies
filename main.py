@@ -135,7 +135,7 @@ def greedy(netlist):
             # If the end_gate is not reached, return -1
             #return -1
     return total_distance
-# TODO; move global files to config.py, but init at main.py
+"""# TODO; move global files to config.py, but init at main.py
 grid_rows = 3
 grid_cols = 3
 grid_layers = 1
@@ -143,7 +143,7 @@ chip_nr = 0 # loopt van 0 tot en met 2
 netlist_nr = 1 # loopt van 1 tot en met 3
 netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
 print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-Astar_netlist = Netlist(netlist_file, print_file)
+Astar_netlist = Netlist(netlist_file, print_file)"""
 
 if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
@@ -160,10 +160,8 @@ if __name__ == "__main__":
         print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
     
     move_random(netlist)
-<<<<<<< HEAD
     print(greedy(netlist))
 
-=======
 
     grid_rows = 3
     grid_cols = 3
@@ -187,5 +185,4 @@ if __name__ == "__main__":
     main.Astar_netlist.gate_locations.update(( (0, 0, 0), (1, 0, 0), (2, 2, 0), (1, 1, 0) ))
     print(find_all_paths([ (start, end), (start01, end01) ]))
     # print(main.Astar_netlist.used_connections)
->>>>>>> 54db99a6c7522d7f82dc365e409c99b97e94c73b
     
