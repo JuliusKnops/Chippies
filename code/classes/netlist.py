@@ -6,6 +6,20 @@ class Netlist():
         self.gates = self.load_gates(print_sourcefile)
         self.load_connections(netlist_sourcefile)
 
+        #########################################################
+        ### Insert gate locations, connections, nodes and n, k cost
+        #########################################################
+        self.used_connections = set()
+        self.used_nodes = set()
+        self.gate_locations = set([(int(g.x), int(g.y), g.z) for g in self.gates.values()])
+
+        self.k = 0
+        self.n = 0
+
+        ###############################
+        ### End
+        ###############################
+
     def load_gates(self, sourcefile):
         gates = {}
 
