@@ -87,6 +87,40 @@ def move_random(netlist):
                     elif move_axis == 'z':
                         netlist.gates[chip].z -= move_direction
 
+def greedy(netlist):
+    total_distance = 0
+    for start_gate in netlist.gates.values():
+        for end_gate in start_gate.connections:
+            # Create a queue to store the next cells to visit
+            print(f"start gate = {start_gate.name} | end gate = {end_gate.name}")
+            queue = [(start_gate.x, start_gate.y, 0)]
+            # Create a set to store visited cells
+            visited = set()
+            # Define the possible moves for the algorithm
+            moves = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+            
+            while queue:
+                # Get the first cell from the queue
+                x, y, dist = queue.pop(0)
+                # If the cell is the end_gate, return the distance
+                if x == end_gate.x and y == end_gate.y:
+                    total_distance += dist
+                    print(f"dist = {dist}")
+                    break
+                # If the cell has been visited, continue to the next cell
+                if (x, y) in visited:
+                    continue
+                # Mark the cell as visited
+                visited.add((x, y))
+                # Add all valid, unvisited moves to the queue
+                for dx, dy in moves:
+                    if 0 <= x+dx <= 20 and 0 <= y+dy <= 20:
+                        #if grid[x+dx][y+dy] != "#":
+                        queue.append((x+dx, y+dy, dist+1))
+            # If the end_gate is not reached, return -1
+            #return -1
+    return total_distance
+
 if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
     netlist_nr = 1 # loopt van 1 tot en met 3
@@ -102,4 +136,6 @@ if __name__ == "__main__":
         print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
     
     move_random(netlist)
+    print(greedy(netlist))
+
     
