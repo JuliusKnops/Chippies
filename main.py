@@ -1,6 +1,7 @@
 import csv
 import random
 from code.algorithms.Astar import *
+import time
 
 class Netlist():
     def __init__(self, netlist_sourcefile, print_sourcefile):
@@ -52,58 +53,73 @@ class Gates():
 # seed kiezen voor 
 def move_random(netlist):
     print("functie is aangeroepen")
-    x_max = 7
-    y_max = 7
-    z_max = 7
+    x_max = 8
+    y_max = 8
+    z_max = 0
     n = 0
     k = 0
     made_moves = set()
+    max_dim_xyz = (x_max, y_max, z_max)
     #netlist = {1: chip1, 2:chip2}
+    invalid_nodes = set()
+    for chip in netlist.gates:
+        invalid_nodes.add((netlist.gates[chip].x, netlist.gates[chip].y)) # class attribute van maken in netlist
+
+    #invalid_nodes = [(netlist.gates.x, netlist.gates.y) for (netlist.gates.x, netlist.gates.y) in netlist.gates]
+    #print(invalid_nodes)
+    #quit()
     
     """ Manhatten probleem toepassen, niet direct terug kunnen gaan"""
 
     for chip in netlist.gates:
         print(f"for chip-loop: {chip}")
+        current_x_loc = netlist.gates[chip].x
+        current_y_loc = netlist.gates[chip].y
+        current_z_loc = netlist.gates[chip].z
+        current_loc = (current_x_loc, current_y_loc, current_z_loc)
+        start_loc = current_loc
         for connections in netlist.gates[chip].connections:
             print(f"connections = {connections}")
-            inbounds = True
             print(f"netlist.gates[chip].x = {netlist.gates[chip].x}")
-            while netlist.gates[chip].x != connections.x or netlist.gates[chip].y != connections.y or netlist.gates[chip].z != connections.z:
-                print(f"while loop")
-                # kies willekeurige richting, x-, y-, of z-as
-                move_axis = random.choice(['x', 'y', 'z']) #([netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].z])
-                move_direction = random.choice([-1, 1])
-                # willekeurige richting op gekozen as gaan
-                if move_axis == 'x':
-                    netlist.gates[chip].x += move_direction
-                elif move_axis == 'y':
-                    netlist.gates[chip].y += move_direction
-                elif move_axis == 'z':
-                    netlist.gates[chip].z += move_direction
+            end_loc = (connections.x, connections.y, connections.z)
+            possible_moves = [(1,0,0), (0,1,0),  (-1,0,0),(0,-1,0)] # (0,0,1), , (0,0,-1)
+            while current_loc != end_loc and len(possible_moves) != 0:
+                print(f"current_loc = {current_loc}, end_loc = {end_loc}")
+                #possible_moves = [(1,0,0), (0,1,0), (-1,0,0),(0,-1,0)]
+                #print(len(possible_moves))
+                #while len(possible_moves) != 0 and current_loc !=  end_loc:
 
-                """print(f"move axis = {move_axis}")
-                # kies willekeurige richting in bovengekozen as
-                move_direction = random.choice([-1, 1])
-                print(f"move direction = {move_direction}")
-                move_axis += move_direction"""
-                # inbounds?
-                if 0 <= netlist.gates[chip].x <= x_max and 0 <= netlist.gates[chip].y <= y_max and 0 <= netlist.gates[chip].z <= z_max:
-                    if (netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].z) in made_moves: 
-                        k += 1
-                        print(f"k = {k}")
-                    made_moves.add((netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].z))
-                    n += 1
-                    print(f"n = {n}")
+                new_move = random.choice(possible_moves)
+                new_loc = (current_loc[0] + new_move[0], current_loc[1] + new_move[1], current_loc[2] + new_move[2])
+                print(f"new_loc = {new_loc}")
+                if new_loc in made_moves or new_loc in invalid_nodes or not (0 <= new_loc[0] <= max_dim_xyz[0] and 0 <= new_loc[1] <= max_dim_xyz[1] and 0 <= new_loc[2] <= max_dim_xyz[2]):
+                    print(f"REMOVE MOVE: in made moves = {new_loc in made_moves}")
+                    possible_moves.remove(new_move)
+
+                    if len(possible_moves) == 0:
+                        possible_moves = [(1,0,0), (0,1,0), (-1,0,0),(0,-1,0)]
+                        current_loc = (current_x_loc, current_y_loc, current_z_loc)
+                        print("RESET")
+                        time.sleep(0.5)
+                        made_moves = set()
                 else:
-                    if move_axis == 'x':
-                        netlist.gates[chip].x -= move_direction
-                    elif move_axis == 'y':
-                        netlist.gates[chip].y -= move_direction
-                    elif move_axis == 'z':
-                        netlist.gates[chip].z -= move_direction
+                    print("MOVE GEVONDEN< TOEVOEGEN")
+                    made_moves.add(current_loc)
+                    current_loc = new_loc
+                    n += 1
+                    possible_moves = [(1,0,0), (0,1,0), (-1,0,0),(0,-1,0)]
+        print(f"PAD GEVONDEN: Made moves {start_loc} {end_loc}: {made_moves} {len(made_moves)}")
+        time.sleep(5.5)
+
+    return n
 
 def greedy(netlist):
     total_distance = 0
+
+    invalid_nodes = set()
+    for chip in netlist.gates:
+        invalid_nodes.add((netlist.gates[chip].x, netlist.gates[chip].y))
+
     for start_gate in netlist.gates.values():
         for end_gate in start_gate.connections:
             # Create a queue to store the next cells to visit
@@ -123,7 +139,7 @@ def greedy(netlist):
                     print(f"dist = {dist}")
                     break
                 # If the cell has been visited, continue to the next cell
-                if (x, y) in visited:
+                if (x, y) in visited or ((x, y) in invalid_nodes and (x, y) != (start_gate.x, start_gate.y)):
                     continue
                 # Mark the cell as visited
                 visited.add((x, y))
@@ -133,8 +149,8 @@ def greedy(netlist):
                         #if grid[x+dx][y+dy] != "#":
                         queue.append((x+dx, y+dy, dist+1))
             # If the end_gate is not reached, return -1
-            #return -1
-    return total_distance
+            return -1
+    return total_distance, visited
 """# TODO; move global files to config.py, but init at main.py
 grid_rows = 3
 grid_cols = 3
@@ -159,10 +175,10 @@ if __name__ == "__main__":
     for chip in netlist.gates:
         print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
     
-    move_random(netlist)
+    #move_random(netlist)
     print(greedy(netlist))
 
-
+"""
     grid_rows = 3
     grid_cols = 3
     grid_layers = 1
@@ -184,5 +200,5 @@ if __name__ == "__main__":
     # Astar_netlist.used_connections.add("test")
     main.Astar_netlist.gate_locations.update(( (0, 0, 0), (1, 0, 0), (2, 2, 0), (1, 1, 0) ))
     print(find_all_paths([ (start, end), (start01, end01) ]))
-    # print(main.Astar_netlist.used_connections)
+    # print(main.Astar_netlist.used_connections)"""
     
