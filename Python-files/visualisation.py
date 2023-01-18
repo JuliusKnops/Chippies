@@ -1,8 +1,9 @@
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d 
 import ast
+from mpl_toolkits import mplot3d 
+
 
 with open("output.csv", 'r') as p:
     pathways = csv.reader(p)
