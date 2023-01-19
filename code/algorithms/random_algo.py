@@ -86,6 +86,7 @@ def random_algo(netlist):
             found_path = False
             reset = True
             
+            # start with all possible moves
             possible_moves = [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]
 
             # while start_gate and end_gate are not connected
@@ -97,7 +98,6 @@ def random_algo(netlist):
                 # pick random move from possible moves
                 random_move = random.choice(possible_moves)
                
-                
                 # calculate new position of wire's end by adding random move to current wire position
                 new_wire_location = calculate_wire_pos(new_wire_location, random_move, '+') 
 
@@ -117,7 +117,7 @@ def random_algo(netlist):
                     # if all possible moves are removed from a possition, reset the current path and start over from start_gate
                     path, new_wire_location, reset = path_reset(possible_moves, start_gate, new_wire_location, path)
                 
-                #path=valid
+                # new node is valid
                 else:
                     # update path list with the new connection
                     path, reset = add_to_path(new_wire_location, path)
@@ -129,55 +129,6 @@ def random_algo(netlist):
             solution = update_solution(solution, path)
 
     return solution
-
-def find_path(start_gate, end_gate):
-    """
-    path en visited gescheiden houden, path pas toevoegen aan visited wanneer het een valid path is.
-    anders worden de punten bij visited gelijk toegevoegd, ook wanneer er een reset plaats vind en de vorige
-    paden verwijderd worden.
-
-    als distance tussen wire en end_gate 1 is (manhatten distance), dan connecten aan punt
-    i.p.v. dat de lijn vlak voor gate nog naar boven kan gaan etc.
-    """
-
-
-
-    path = []
-    path.append(start_gate)
-
-    new_wire_location = start_gate
-
-    # loop
-    found_path = False
-    reset = True
-    while not found_path:
-
-        if reset:
-            possible_moves = [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]
-
-        random_move = random.choice(possible_moves)
-
-        new_wire_location = (new_wire_location[0] + random_move[0], new_wire_location[1] + random_move[1], new_wire_location[2] + random_move[2])
-
-        if (new_wire_location[0] - end_gate[0], new_wire_location[1] - end_gate[1], new_wire_location[2] - end_gate[2]) in [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]:
-            path.append(new_wire_location)
-            path.append(end_gate)
-            found_path = True 
-            break
-        
-        if not valid_node(new_wire_location):
-            possible_moves.remove(random_move)
-            reset = False
-            new_wire_location = (new_wire_location[0] - random_move[0], new_wire_location[1] - random_move[1], new_wire_location[2] - random_move[2])
-        
-            if len(possible_moves) == 0:
-                reset = True
-                path = []
-                new_wire_location = (start_gate[0], start_gate[1], start_gate[2])
-
-        if new_wire_location not in path:   
-            path.append(new_wire_location) 
-            reset = True
 
 def get_invalid_nodes(netlist):
     invalid_nodes = set()
@@ -194,7 +145,7 @@ def reset_possible_moves(reset, possible_moves):
 def path_reset(possible_moves, start_gate, new_wire_location, path):
     if len(possible_moves) == 0:
         reset = True
-        path = []
+        path = [start_gate]
         new_wire_location = start_gate
         return path, new_wire_location, reset
     return path, new_wire_location, False
@@ -218,7 +169,6 @@ def check_goal(new_wire_location, path, end_gate):
         found_path = True 
         return path, found_path
     return path, False
-        
 
 def out_of_bounds(location):
     return not (0 <= location[0] <= 7 and 0 <= location[1] <= 7 and 0 <= location[2] <= 7)
