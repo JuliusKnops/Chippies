@@ -60,7 +60,7 @@ def random_algo(netlist):
 
     # get invalid nodes of placed gates on grid
     invalid_nodes = get_invalid_nodes(netlist)
-
+    
     # for each gate in netlist
     for gates in netlist.gates.values():
 
@@ -72,7 +72,6 @@ def random_algo(netlist):
 
             # create end_gate variable
             end_gate = (connection.x, connection.y, connection.z)
-            #print(f"end gate = {connection.name} op locatie {end_gate}")
 
             # create empty list for path between start gate and end gate
             path = []
@@ -89,8 +88,14 @@ def random_algo(netlist):
             # start with all possible moves
             possible_moves = [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]
 
+            # variable for reset the whole netlist, incase of complete stuckness
+            hard_stuck = 0
+
             # while start_gate and end_gate are not connected
             while not found_path:
+
+                # check if current completion is not forming a hardstuck for next gate
+                check_hard_stuck(hard_stuck, netlist)
 
                 # reset the possible move list, happens when starting for a new point or when the whole path gets resetted
                 possible_moves = reset_possible_moves(reset, possible_moves)
@@ -115,7 +120,8 @@ def random_algo(netlist):
                     reset = False
 
                     # if all possible moves are removed from a possition, reset the current path and start over from start_gate
-                    path, new_wire_location, reset = path_reset(possible_moves, start_gate, new_wire_location, path)
+                    # increase hard stuck by one
+                    path, new_wire_location, reset, hard_stuck = path_reset(possible_moves, start_gate, new_wire_location, path, hard_stuck)
                 
                 # new node is valid
                 else:
@@ -129,6 +135,7 @@ def random_algo(netlist):
             solution = update_solution(solution, path)
 
     return solution
+    
 
 def get_invalid_nodes(netlist):
     invalid_nodes = set()
@@ -142,13 +149,14 @@ def reset_possible_moves(reset, possible_moves):
         return [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]
     return possible_moves
 
-def path_reset(possible_moves, start_gate, new_wire_location, path):
+def path_reset(possible_moves, start_gate, new_wire_location, path, hard_stuck):
     if len(possible_moves) == 0:
         reset = True
         path = [start_gate]
         new_wire_location = start_gate
-        return path, new_wire_location, reset
-    return path, new_wire_location, False
+        hard_stuck += 1
+        return path, new_wire_location, reset, hard_stuck
+    return path, new_wire_location, False, hard_stuck
 
 def calculate_wire_pos(new_wire_location, random_move, dir):
     if dir == '+':
@@ -187,6 +195,13 @@ def update_solution(solution, path):
         tmp_solution.append(nodes)
     solution.append(tmp_solution)
     return solution
+
+def check_hard_stuck(hard_stuck, netlist):
+    print(f"CHECK HARDSTUCK = {hard_stuck}")
+    if hard_stuck >= 100:
+        print("#################### RESET BOARD ####################")
+        print(random_algo(netlist))
+    
 
 
 if __name__ == "__main__":
