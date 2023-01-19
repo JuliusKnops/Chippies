@@ -85,16 +85,19 @@ def random_algo(netlist):
 
             found_path = False
             reset = True
+            
+            possible_moves = [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]
 
             # while start_gate and end_gate are not connected
             while not found_path:
 
                 # reset the possible move list, happens when starting for a new point or when the whole path gets resetted
-                possible_moves = reset_possible_moves(reset)
+                possible_moves = reset_possible_moves(reset, possible_moves)
 
                 # pick random move from possible moves
                 random_move = random.choice(possible_moves)
-
+               
+                
                 # calculate new position of wire's end by adding random move to current wire position
                 new_wire_location = calculate_wire_pos(new_wire_location, random_move, '+') 
 
@@ -106,13 +109,13 @@ def random_algo(netlist):
                     possible_moves.remove(random_move)
 
                     # reverse the made move and return to previous position
-                    new_wire_location = calculate_wire_pos(new_wire_location, random_move, '-') #(new_wire_location[0] - random_move[0], new_wire_location[1] - random_move[1], new_wire_location[2] - random_move[2])
+                    new_wire_location = calculate_wire_pos(new_wire_location, random_move, '-') 
                     
                     # next iteration the list will not return to standard list
                     reset = False
 
                     # if all possible moves are removed from a possition, reset the current path and start over from start_gate
-                    path, new_wire_location, reset = path_reset(possible_moves, start_gate)
+                    path, new_wire_location, reset = path_reset(possible_moves, start_gate, new_wire_location, path)
                 
                 #path=valid
                 else:
@@ -183,16 +186,18 @@ def get_invalid_nodes(netlist):
     print(f"invalid nodes = {invalid_nodes}")
     return invalid_nodes
 
-def reset_possible_moves(reset):
+def reset_possible_moves(reset, possible_moves):
     if reset:
         return [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]
+    return possible_moves
 
-def path_reset(possible_moves, start_gate):
+def path_reset(possible_moves, start_gate, new_wire_location, path):
     if len(possible_moves) == 0:
         reset = True
         path = []
         new_wire_location = start_gate
         return path, new_wire_location, reset
+    return path, new_wire_location, False
 
 def calculate_wire_pos(new_wire_location, random_move, dir):
     if dir == '+':
@@ -204,13 +209,16 @@ def add_to_path(new_wire_location, path):
         path.append(new_wire_location) 
         reset = True
         return path, reset
+    return path, False
 
 def check_goal(new_wire_location, path, end_gate):
     if (new_wire_location[0] - end_gate[0], new_wire_location[1] - end_gate[1], new_wire_location[2] - end_gate[2]) in [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]:
-            path.append(new_wire_location)
-            path.append(end_gate)
-            found_path = True 
-            return path, found_path
+        path.append(new_wire_location)
+        path.append(end_gate)
+        found_path = True 
+        return path, found_path
+    return path, False
+        
 
 def out_of_bounds(location):
     return not (0 <= location[0] <= 7 and 0 <= location[1] <= 7 and 0 <= location[2] <= 7)
