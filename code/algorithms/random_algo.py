@@ -95,7 +95,8 @@ def random_algo(netlist):
             while not found_path:
 
                 # check if current completion is not forming a hardstuck for next gate
-                check_hard_stuck(hard_stuck, netlist)
+                if check_hard_stuck(hard_stuck, netlist):
+                    return
 
                 # reset the possible move list, happens when starting for a new point or when the whole path gets resetted
                 possible_moves = reset_possible_moves(reset, possible_moves)
@@ -141,7 +142,7 @@ def get_invalid_nodes(netlist):
     invalid_nodes = set()
     for gate in netlist.gates.values():
         invalid_nodes.add((gate.x, gate.y, gate.z)) # class attribute van maken in netlist
-    print(f"invalid nodes = {invalid_nodes}")
+    #print(f"invalid nodes = {invalid_nodes}")
     return invalid_nodes
 
 def reset_possible_moves(reset, possible_moves):
@@ -172,7 +173,7 @@ def add_to_path(new_wire_location, path):
 
 def check_goal(new_wire_location, path, end_gate):
     if (new_wire_location[0] - end_gate[0], new_wire_location[1] - end_gate[1], new_wire_location[2] - end_gate[2]) in [(1,0,0), (0,1,0), (-1,0,0), (0,-1,0), (0,0,1), (0,0,-1)]:
-        path.append(new_wire_location)
+        #path.append(new_wire_location)
         path.append(end_gate)
         found_path = True 
         return path, found_path
@@ -197,10 +198,11 @@ def update_solution(solution, path):
     return solution
 
 def check_hard_stuck(hard_stuck, netlist):
-    print(f"CHECK HARDSTUCK = {hard_stuck}")
-    if hard_stuck >= 100:
-        print("#################### RESET BOARD ####################")
-        print(random_algo(netlist))
+    #print(f"CHECK HARDSTUCK = {hard_stuck}")
+    if hard_stuck == 100:
+        #print("#################### RESET BOARD ####################")
+        # random_algo(netlist)
+        return True
     
 
 
@@ -219,7 +221,14 @@ if __name__ == "__main__":
     #    print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
     
     #move_random(netlist)
-    print(random_algo(netlist))
+    #print(random_algo(netlist))
+
+    random_paths = []
+    random_paths = random_algo(netlist)
+    while not random_paths:
+       random_paths = random_algo(netlist)
+    
+    print(random_paths)
 
 """
 [[(1, 5, 0), (1, 4, 0), (2, 4, 0), (2, 4, 1), (2, 5, 1), (2, 5, 2), (2, 4, 2), (3, 4, 2), (3, 4, 1), (4, 4, 1), (4, 4, 0)], [(1, 5, 0), (0, 5, 0), (0, 6, 0), (0, 6, 1), (1, 6, 1), (1, 6, 2), (1, 7, 2), (1, 7, 1), (1, 8, 1), (1, 8, 0), (1, 7, 0), (2, 7, 0), (2, 6, 0), (2, 5, 0), (3, 5, 0), (3, 4, 0), (3, 3, 0), (3, 2, 0), (3, 2, 1), (4, 2, 1), (4, 3, 1), (5, 3, 1), (6, 3, 1), (6, 3, 0), (6, 4, 0), (6, 5, 0)], [(4, 4, 0), (5, 4, 0), (5, 5, 0), (5, 5, 1), (5, 4, 1), (6, 4, 1), (6, 4, 2), (7, 4, 2), (7, 3, 2), (8, 3, 2), (8, 3, 3), (8, 2, 3), (8, 1, 3), (8, 1, 4), (9, 1, 4), (9, 1, 5), (9, 0, 5), (8, 0, 5), (7, 0, 5), (6, 0, 5), (6, 0, 6), (5, 0, 6), (5, 0, 5), (5, 1, 5), (5, 2, 5), (6, 2, 5), (7, 2, 5), (7, 1, 5), (7, 1, 4), (7, 1, 3), (6, 1, 3), (6, 1, 2), (6, 1, 1), (6, 0, 1), (5, 0, 1), (5, 1, 1), (5, 2, 1), (5, 2, 2), (5, 1, 2), (5, 0, 2), (4, 0, 2), (4, 0, 1), (3, 0, 1), (3, 0, 0), (3, 1, 0)], [(6, 2, 0), (6, 2, 1), (7, 2, 1), (7, 2, 0), (7, 3, 0), (7, 4, 0), (7, 5, 0), (6, 5, 0)], [(6, 2, 0), (6, 1, 0), (6, 0, 0), (5, 0, 0), (5, 1, 0), (5, 2, 0), (5, 3, 0), (4, 3, 0), (4, 2, 0), (4, 1, 0), (3, 1, 0)]]
