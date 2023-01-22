@@ -1,10 +1,10 @@
-class Gates(): # Overerven van Node class
+# NOTE: Gate object not exactly the same as node object
+class Gates():
     def __init__(self, x_coordinate, y_coordinate, name):
-        #super__init__(x, y)
-        self.x = x_coordinate
-        self.y = y_coordinate
+        self.x = int(x_coordinate)
+        self.y = int(y_coordinate)
         self.z = 0
-        self.name = name
+        self.name = name  
         self.connections = set()
     
     def add_connections(self, NewPoint):
