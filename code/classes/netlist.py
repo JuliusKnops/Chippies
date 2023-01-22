@@ -1,5 +1,5 @@
 import csv 
-from gates import Gates
+from .gates import *
 
 class Netlist():
     def __init__(self, netlist_sourcefile, print_sourcefile):
