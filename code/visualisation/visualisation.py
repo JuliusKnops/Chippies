@@ -16,7 +16,7 @@ for i in gates:
     y_gates.append(i[1])
     ax.scatter(x_gates, y_gates, c='red', s=100)
 
-example = 
+example = []
 
 
 for i in example:
