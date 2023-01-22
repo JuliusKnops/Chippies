@@ -9,39 +9,6 @@ class Node:
         self.cost = cost
         self.parent = parent
 
-    # NOTE: This is code for a different project that still needs to be
-    #       converted. This code assumes that each point is incremently numbered
-    #       for example a 7x7 grid is numbered from 0 to 48.
-    # TODO: Convert code to fit this project's needs
-    def next_moves(self):
-       # check if up and down possible
-        rest = int(pos_index % self.map_rows)
-        if rest == 0:
-            pos_index_up = pos_index
-            pos_index_down = pos_index + 1
-        elif rest == (self.map_rows-1):
-            pos_index_up = pos_index - 1
-            pos_index_down = pos_index
-        else:
-            pos_index_up = pos_index - 1
-            pos_index_down = pos_index + 1
-
-        # check if left and right possible
-        division = float((pos_index+1)) / float(self.map_rows)
-        if division > (self.map_columns - 1):
-            pos_index_left = pos_index
-            pos_index_right = pos_index - self.map_rows
-        elif division <= 1:
-            pos_index_left = pos_index + self.map_rows
-            pos_index_right = pos_index
-        else:
-            pos_index_left = pos_index + self.map_rows
-            pos_index_right = pos_index - self.map_rows
-
-        # set has no index, so change it
-        # NOTE: made it a set
-        return tuple(set((pos_index, pos_index_up, pos_index_down, pos_index_left, pos_index_right)))
-
     # Allows qheap to auto sort
     def __lt__(self, other):
         global destination_node
@@ -72,7 +39,7 @@ class PathFinder(object):
         self.End_chip = End_chip
 
         if auto_pathfind:
-            self.path = self.astar()
+            self.path, self.cost = self.astar()
 
     #######################
     ### Unfinished Astar
@@ -107,6 +74,12 @@ class PathFinder(object):
             # checks if goal node
             if current == destination_node:
                 path = []
+                # save final cost before pathing back to start
+                cost = current.cost
+
+                # TODO; more efficient implementation
+                end_node = current
+
                 # returns the path and then reverse the order
                 # NOTE: order start at the end and ends at the start.
                 #       We visit each parent node until no parent node
@@ -132,7 +105,10 @@ class PathFinder(object):
                 # Re-add gate
                 main.Astar_netlist.gate_locations.add( (destination_node.x, destination_node.y, destination_node.z) )
 
-                return path[::-1]
+                # remove used node as gate
+                main.Astar_netlist.used_nodes.remove( (destination_node.x, destination_node.y, destination_node.z) )
+
+                return path[::-1], cost
 
             # skip Node if already visited
             if (current.x, current.y, current.z) in visited:
@@ -191,11 +167,12 @@ class PathFinder(object):
 def find_all_paths(all_connections, as_objects = False):
     # from main import Astar_netlist
     all_paths = []
-    
+    total_cost = 0
     for connection in all_connections:
         start_node, end_node = connection
-        path = PathFinder(start_node, end_node)
+        path = PathFinder(Node(*start_node), Node(*end_node))
         all_paths.append(path)
+        total_cost += path.cost
 
         # add connections to used_connections
         for i in range( (len(path.path)-1) ):
@@ -213,9 +190,9 @@ def find_all_paths(all_connections, as_objects = False):
 
 
     if as_objects:
-        return all_paths
+        return all_paths, total_cost
 
-    return [pf.path for pf in all_paths]
+    return [pf.path for pf in all_paths], total_cost
 
 if __name__ == '__main__':
     grid_rows = 3
