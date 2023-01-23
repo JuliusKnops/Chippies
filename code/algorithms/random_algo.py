@@ -3,10 +3,18 @@ import random
 #from code.algorithms.Astar import *
 import time
 
+"""
+In plaats van controleren of een move gaat naar een node die al bezet is, (1, 2) in visited,
+kijken of tweetal van nodes als paar in visited zit ((xn1, yn1), (xn2, yn2)) en ((xn2, yn2), (xn1, yn1)) zo kijken of dit segment al
+gelopen is.
+"""
+
 class Netlist():
     def __init__(self, netlist_sourcefile, print_sourcefile):
         self.gates = self.load_gates(print_sourcefile)
         self.load_connections(netlist_sourcefile)
+        self.invalid_gates = self.invalid_gates()
+        self.dimension = self.get_dimensions()
 
         #########################################################
         ### Insert gate locations, connections, nodes and n, k cost
@@ -22,6 +30,12 @@ class Netlist():
         ### End
         ###############################
 
+
+        #####
+        # Toevoegen van berekende functies zoals kosten, aantal units en valid als boolean.
+        # functie aanroepen en dit opslaan onder class attribute
+        #####
+
     def load_gates(self, sourcefile):
         gates = {}
 
@@ -29,7 +43,12 @@ class Netlist():
             reader = csv.DictReader(in_file) 
 
             for row in reader:
-                gates[row['chip']] = Gates(row['x'], row['y'], row['chip'])
+                gate = list(row.values())
+                gate_name = gate[0]
+                gate_x = gate[1]
+                gate_y = gate[2]
+                gate_z = 0 if len(gate) == 3 else gate[3]
+                gates[gate_name] = Gates(gate_name, gate_x, gate_y, gate_z)
 
         return gates
     
@@ -37,18 +56,53 @@ class Netlist():
         with open(sourcefile) as in_file:
             reader = csv.DictReader(in_file) 
             for row in reader:
-                self.gates[row['chip_a']].add_connections(self.gates[row['chip_b']])
+                connections = list(row.values())
+                gate_a = connections[0]
+                gate_b = connections[1]
+                self.gates[gate_a].add_connections(self.gates[gate_b])
+    
+    def invalid_gates(self):
+        invalid_nodes = set()
+        for gate in self.gates.values():
+            for z in range(gate.z):
+                invalid_nodes.add((gate.x, gate.y, z))
+        return invalid_nodes
+    
+    # dimensies ook mogelijk als parameter invoeren wanneer netlist class aangemaakt word
+    # standaard x, y en z op 0 zetten, tenzij die als parameters worden meegeven
+    def get_dimensions(self):
+        x_max = 0
+        y_max = 0
+        z_max = 7
+        for gate in self.gates.values():
+            x_max = gate.x if gate.x > x_max else x_max
+            y_max = gate.y if gate.y > y_max else y_max
+            #z_max = gate.z if gate.z > z_max else z_max
+        return (x_max + 1, y_max + 1, z_max)
+    
+    def get_x(self):
+        return self.dimension[0]
+
+    def get_y(self):
+        return self.dimension[1]
+
+    def get_z(self):
+        return self.dimension[2]
+            
 
 class Gates():
-    def __init__(self, x_coordinate, y_coordinate, name):
+    def __init__(self, name, x_coordinate, y_coordinate, z_coordinate):
         self.x = int(x_coordinate)
         self.y = int(y_coordinate)
-        self.z = 0
+        self.z = int(z_coordinate)
         self.name = name  
         self.connections = set()
     
     def add_connections(self, NewPoint):
         self.connections.add(NewPoint)
+    
+    def get_coordinates(self):
+        return (self.x, self.y, self.z)
 
 def random_algo(netlist):
 
@@ -59,19 +113,19 @@ def random_algo(netlist):
     solution = []
 
     # get invalid nodes of placed gates on grid
-    invalid_nodes = get_invalid_nodes(netlist)
+    invalid_nodes = netlist.invalid_gates #get_invalid_nodes(netlist)
     
     # for each gate in netlist
     for gates in netlist.gates.values():
 
-        # create start_gate and get coord
-        start_gate = (gates.x, gates.y, gates.z)
+        # create start_gate and get coordinates of object
+        start_gate = gates.get_coordinates() #(gates.x, gates.y, gates.z)
 
         # for each connection of the starting_gate
         for connection in gates.connections:
 
-            # create end_gate variable
-            end_gate = (connection.x, connection.y, connection.z)
+            # create end_gate variable and get coordinates of object
+            end_gate = connection.get_coordinates() #(connection.x, connection.y, connection.z)
 
             # create empty list for path between start gate and end gate
             path = []
@@ -95,7 +149,7 @@ def random_algo(netlist):
             while not found_path:
 
                 # check if current completion is not forming a hardstuck for next gate
-                if check_hard_stuck(hard_stuck, netlist):
+                if check_hard_stuck(hard_stuck):
                     return
 
                 # reset the possible move list, happens when starting for a new point or when the whole path gets resetted
@@ -109,7 +163,7 @@ def random_algo(netlist):
 
                 # check if new position is a valid position 
                 # (check if node has not been visited before, node is not another gate and node is not out of bounds)
-                if not valid_node(new_wire_location, visited, invalid_nodes, path):
+                if not valid_node(new_wire_location, visited, invalid_nodes, path, netlist):
                     
                     # remove made move from list of possible moves
                     possible_moves.remove(random_move)
@@ -138,12 +192,12 @@ def random_algo(netlist):
     return solution
     
 
-def get_invalid_nodes(netlist):
-    invalid_nodes = set()
-    for gate in netlist.gates.values():
-        invalid_nodes.add((gate.x, gate.y, gate.z)) # class attribute van maken in netlist
-    #print(f"invalid nodes = {invalid_nodes}")
-    return invalid_nodes
+# def get_invalid_nodes(netlist):
+#     invalid_nodes = set()
+#     for gate in netlist.gates.values():
+#         invalid_nodes.add((gate.x, gate.y, gate.z)) # class attribute van maken in netlist
+#     #print(f"invalid nodes = {invalid_nodes}")
+#     return invalid_nodes
 
 def reset_possible_moves(reset, possible_moves):
     if reset:
@@ -179,11 +233,12 @@ def check_goal(new_wire_location, path, end_gate):
         return path, found_path
     return path, False
 
-def out_of_bounds(location):
-    return not (0 <= location[0] <= 7 and 0 <= location[1] <= 7 and 0 <= location[2] <= 7)
-
-def valid_node(location, visited, invalid_nodes, path):
-    return (not (location in visited or location in invalid_nodes or location in path)) and not out_of_bounds(location)
+# functies aanpassen naar class functies -> class variables aanmaken voor visited en path, zodat aantal parameters naar netlist en location gaan.
+def out_of_bounds(location, netlist):
+    return not (0 <= location[0] <= netlist.get_x() and 0 <= location[1] <= netlist.get_y() and 0 <= location[2] <= netlist.get_z())
+# functies aanpassen naar class functies -> class variables aanmaken voor visited en path, zodat aantal parameters naar netlist en location gaan.
+def valid_node(location, visited, invalid_nodes, path, netlist):
+    return (not (location in visited or location in invalid_nodes or location in path)) and not out_of_bounds(location, netlist)
 
 def update_visited(visited, path):
     for nodes in path:
@@ -197,11 +252,8 @@ def update_solution(solution, path):
     solution.append(tmp_solution)
     return solution
 
-def check_hard_stuck(hard_stuck, netlist):
-    #print(f"CHECK HARDSTUCK = {hard_stuck}")
+def check_hard_stuck(hard_stuck):
     if hard_stuck == 100:
-        #print("#################### RESET BOARD ####################")
-        # random_algo(netlist)
         return True
     
 
