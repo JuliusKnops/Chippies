@@ -32,14 +32,12 @@ if __name__ == "__main__":
     # for chip in netlist.gates:
     #     print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
     
-    print(random_algo.get_randomize_solution(netlist))
-    
     
     
     #move_random(netlist)
     # print(move_random.greedy(netlist))
 
-    # print(find_cheapest_path(config.Astar_netlist, PathFinder=Astar.PathFinder_Astar, Node=Astar.Node_Astar))
+    print(find_cheapest_path(config.Astar_netlist, PathFinder=Astar.PathFinder_Astar, Node=Astar.Node_Astar))
     # print(dijkstra.PathFinder_dijkstra(config.Astar_netlist.connection_tuples))
 
     # n = 10
