@@ -66,6 +66,21 @@ class Netlist():
             for z in range(gate.z):
                 invalid_nodes.add((gate.x, gate.y, z))
         return invalid_nodes
+
+    def get_connection_tuples(self):
+        connection_set = set()
+        for chip in self.gates:
+            current_x_loc = self.gates[chip].x
+            current_y_loc = self.gates[chip].y
+            current_z_loc = self.gates[chip].z
+            current_loc = (current_x_loc, current_y_loc, current_z_loc)
+            start_loc = current_loc
+            for connections in self.gates[chip].connections:
+                end_loc = (connections.x, connections.y, connections.z)
+                connection = frozenset((start_loc, end_loc))
+                connection_set.add(connection)
+        
+        return [ tuple(c) for c in connection_set ]
     
     # returns all gate objects that are in the current netlist dictionary
     def get_gates(self):
@@ -146,3 +161,9 @@ class Netlist():
         for path in self.solution:
             units += len(path) - 1
         return units
+
+    def reset(self):
+        self.used_nodes = set()
+        self.used_connections = set()
+        self.n = 0
+        self.k = 0
