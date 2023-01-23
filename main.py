@@ -1,13 +1,19 @@
 from code.algorithms import Astar
+from code.algorithms import dijkstra
 from code.algorithms import genetic_algorithm
 from code.algorithms import genetic
 from code.algorithms import move_random
 from code.algorithms import random_algo
 
+from code.algorithms.find_paths import find_cheapest_path
+
 from code.classes import gates
 from code.classes import netlist
 
-#from code.visualisation import visualisation
+from code.visualisation import visualisation
+
+import config
+import timeit
 
 import config
 
@@ -32,6 +38,17 @@ if __name__ == "__main__":
     
     #move_random(netlist)
     # print(move_random.greedy(netlist))
+
+    # print(find_cheapest_path(config.Astar_netlist, PathFinder=Astar.PathFinder_Astar, Node=Astar.Node_Astar))
+    # print(dijkstra.PathFinder_dijkstra(config.Astar_netlist.connection_tuples))
+
+    # n = 10
+
+    # result = timeit.timeit(stmt='find_cheapest_path(config.Astar_netlist, PathFinder=dijkstra.PathFinder_dijkstra, Node=dijkstra.Node_dijkstra)', globals=globals(), number=n)
+    # result2 = timeit.timeit(stmt='find_cheapest_path(config.Astar_netlist, PathFinder=Astar.PathFinder_Astar, Node=Astar.Node_Astar)', globals=globals(), number=n)
+    
+    # print(f"Execution time of Astar is {result / n} seconds")
+    # print(f"Execution time of dijkstra is {result2 / n} seconds")
 
 """
     grid_rows = 3
