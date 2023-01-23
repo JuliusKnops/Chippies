@@ -78,9 +78,9 @@ def fitness(units, crossings):
     else: 
         return abs(1/ans)
 
-def count_units(solution):
+def count_units(child):
     n_units = 0
-    for i in solution:
+    for i in child:
         n_units += len(i) - 1
     return n_units
 

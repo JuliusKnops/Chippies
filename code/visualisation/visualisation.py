@@ -10,6 +10,7 @@ def visualisation():
     ax = fig.add_subplot(projection= "3d")
     ax.set_xlim(0, 7); ax.set_ylim(0, 7); ax.set_zlim(0, 7)
 
+<<<<<<< HEAD
     # place gates 
     x_gates = []
     y_gates = []
@@ -17,6 +18,10 @@ def visualisation():
         x_gates.append(i[0])
         y_gates.append(i[1])
         ax.scatter(x_gates, y_gates, c='red', s=25)
+=======
+example = []
+
+>>>>>>> 38d293547a8e3e16a0a0688f5621feb7c23570d1
 
     # blauw verbinding
     # oranje verbinding --
