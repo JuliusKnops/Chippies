@@ -7,7 +7,7 @@ from code.algorithms import random_algo
 from code.classes import gates
 from code.classes import netlist
 
-from code.visualisation import visualisation
+#from code.visualisation import visualisation
 
 import config
 
@@ -19,11 +19,16 @@ if __name__ == "__main__":
     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
     
     netlist = netlist.Netlist(netlist_file, print_file)
+    
 
-    print(f"netlist.gates = {netlist.gates}")
+    # print(f"netlist.gates = {netlist.gates}")
 
-    for chip in netlist.gates:
-        print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
+    # for chip in netlist.gates:
+    #     print(chip, netlist.gates[chip].x, netlist.gates[chip].y, netlist.gates[chip].connections)
+    
+    print(random_algo.get_randomize_solution(netlist))
+    
+    
     
     #move_random(netlist)
     # print(move_random.greedy(netlist))
@@ -46,7 +51,7 @@ if __name__ == "__main__":
     end01 = Node(1, 1, 0)
 
     # Astar_netlist = Netlist(netlist_file, print_file)
-    print("\n")
+    #print("\n")
     # Astar_netlist.used_connections.add("test")
     main.Astar_netlist.gate_locations.update(( (0, 0, 0), (1, 0, 0), (2, 2, 0), (1, 1, 0) ))
     print(find_all_paths([ (start, end), (start01, end01) ]))

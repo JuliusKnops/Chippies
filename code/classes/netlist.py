@@ -8,7 +8,7 @@ class Netlist():
         self.invalid_gates = self.invalid_gates()
         self.dimension = self.get_dimensions()
 
-        self.solution = None
+        self.solution = []
 
         #########################################################
         ### Insert gate locations, connections, nodes and n, k cost
@@ -30,6 +30,7 @@ class Netlist():
         # functie aanroepen en dit opslaan onder class attribute
         #####
 
+    # reads the print.csv file and creates the gate objects with given coordinates
     def load_gates(self, sourcefile):
         gates = {}
 
@@ -46,6 +47,7 @@ class Netlist():
 
         return gates
     
+    # reads the netlist.csv file and add to each gate the given connections
     def load_connections(self, sourcefile):
         with open(sourcefile) as in_file:
             reader = csv.DictReader(in_file) 
@@ -55,6 +57,9 @@ class Netlist():
                 gate_b = connections[1]
                 self.gates[gate_a].add_connections(self.gates[gate_b])
     
+    # returns a set with invalid nodes.
+    # if a gate is located on a node with a z > 0, than every node
+    # below the gate is also considered as invalid
     def invalid_gates(self):
         invalid_nodes = set()
         for gate in self.gates.values():
@@ -62,29 +67,50 @@ class Netlist():
                 invalid_nodes.add((gate.x, gate.y, z))
         return invalid_nodes
     
+    # returns all gate objects that are in the current netlist dictionary
+    def get_gates(self):
+        return self.gates.values()
+
+    # calculates the minimum dimension of the chip.
+    def get_dimensions(self):
     # dimensies ook mogelijk als parameter invoeren wanneer netlist class aangemaakt word
     # standaard x, y en z op 0 zetten, tenzij die als parameters worden meegeven
-    def get_dimensions(self):
         x_max = 0
         y_max = 0
         z_max = 7
+
+        x_min = 0
+        y_min = 0
+        z_min = 0
         for gate in self.gates.values():
             x_max = gate.x if gate.x > x_max else x_max
             y_max = gate.y if gate.y > y_max else y_max
             #z_max = gate.z if gate.z > z_max else z_max
-        return (x_max + 1, y_max + 1, z_max)
+            x_min = gate.x if gate.x < x_min else x_min
+            y_min = gate.y if gate.y < y_min else y_min
+            #z_min = gate.z if gate.z < z_min else z_min
+        return (x_min - 1, y_min - 1, z_min), (x_max + 1, y_max + 1, z_max)
     
-    def get_x(self):
-        return self.dimension[0]
+    def get_max_x(self):
+        return self.dimension[1][0]
 
-    def get_y(self):
-        return self.dimension[1]
+    def get_max_y(self):
+        return self.dimension[1][1]
 
-    def get_z(self):
-        return self.dimension[2]
+    def get_max_z(self):
+        return self.dimension[1][2]
+    
+    def get_min_x(self):
+        return self.dimension[0][0]
+
+    def get_min_y(self):
+        return self.dimension[0][1]
+
+    def get_min_z(self):
+        return self.dimension[0][2]
     
     def set_solution(self, solution):
-        self.solution = solution
+        self.solution.append(solution)
 
     # self.solution is de huidige oplossing van het pad met begin gates en eind gates erin
     # dit kan ook vervangen worden voor een lijst waarin deze niet standaard in zitten, dus
