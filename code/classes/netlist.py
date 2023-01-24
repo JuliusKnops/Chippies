@@ -20,6 +20,8 @@ class Netlist():
         self.k = 0
         self.n = 0
 
+        self.connection_tuples = self.get_connection_tuples()
+        
         ###############################
         ### End
         ###############################
