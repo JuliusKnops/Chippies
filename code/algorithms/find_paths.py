@@ -1,5 +1,6 @@
 from . import Astar
 from . import dijkstra
+from tqdm import tqdm
 
 import itertools
 
@@ -57,13 +58,14 @@ def find_cheapest_path( netlist, PathFinder = Astar.PathFinder_Astar,
     netlist.reset()
 
     # go through each order and find the cheapest path
-    for permutation in all_connections_permutations[1:]:
+    for permutation in tqdm(all_connections_permutations[1:]):
         new_path, new_cost = find_all_paths(permutation, netlist,
                                             PathFinder=PathFinder, Node = Node)
         if new_cost < current_cost:
             current_path = new_path
             current_cost = new_cost
             print(current_cost)
+        # print(new_cost)
 
         # reset visited nodes
         netlist.reset()
