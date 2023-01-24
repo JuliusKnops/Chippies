@@ -48,9 +48,9 @@ class PathFinder_Astar(object):
         Else, uses dijkstra. Astar can be converted to dijkstra if the used
         heuristic for estimation is always 0.
         """
-        grid_rows = config.Astar_netlist.dimension[0]
-        grid_cols = config.Astar_netlist.dimension[1]
-        grid_layers = config.Astar_netlist.dimension[2] - 1
+        grid_rows = config.Astar_netlist.dimension[1][0]
+        grid_cols = config.Astar_netlist.dimension[1][1]
+        grid_layers = config.Astar_netlist.dimension[1][2] - 1
 
         # split grid layers in up and down
         grid_layers_up = int(grid_layers / 2)
