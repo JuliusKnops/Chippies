@@ -24,19 +24,12 @@ def crossings(p1, p2):
     return child 
 
 def coin_toss():
-    print(random.randint(0, 1))
     return random.randint(0, 1)
 
-def best_population(population):
-    pass
 
 def random_pairs(population):
     pairs = []
     for i in range(len(population) // 2):
         pairs.append((population.pop(random.randrange(len(population))),
                         population.pop(random.randrange(len(population)))))
-    for p in pairs:
-        p1 = p[0]
-        p2 = p[1]
-
-    return pairs, p1, p2    
+    return pairs  
