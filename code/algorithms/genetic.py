@@ -16,9 +16,18 @@ def start_population(netlist):
 
 def crossings(p1, p2):
     child = []
-    pass
+    for i in range(len(p1)):
+        if coin_toss() == 1:
+            child.append(p1[i])
+        else:
+            child.append(p2[i])
+    return child 
 
-def best_population():
+def coin_toss():
+    print(random.randint(0, 1))
+    return random.randint(0, 1)
+
+def best_population(population):
     pass
 
 def random_pairs(population):
