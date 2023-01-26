@@ -33,3 +33,5 @@ def random_pairs(population):
         pairs.append((population.pop(random.randrange(len(population))),
                         population.pop(random.randrange(len(population)))))
     return pairs  
+
+
