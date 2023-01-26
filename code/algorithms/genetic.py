@@ -60,8 +60,10 @@ def mutate(child):
     P = 0.5
     for path in child:
         if P >= random.uniform(0, 1):
+            print(f"PATH = {path}")
             start = path[0]
             end = path[-1]
+            print("TEST")
             new_path.add((child.index(path), start, end))
             child[child.index(path)] = None
     
@@ -218,16 +220,47 @@ def calculate_euclidean(pos1, pos2):
 def create_new_pop(netlist):
     startpopulation = start_population(netlist)
     print(len(startpopulation))
-    pairs = random_pairs(startpopulation)
+    for i in range(50):
+        pairs = random_pairs(startpopulation)
 
-    startpopulation = p(pairs, startpopulation)
+        startpopulation = p(pairs, startpopulation)
 
-    print(f"startpopulatie = {len(startpopulation)}")
+        print(f"startpopulatie = {len(startpopulation)}")
 
-    # [score, [[(), ()], [(), ()]]]
+        # [score, [[(), ()], [(), ()]]]
 
-    startpopulation = startpopulation[:10]
-    print(f"startpopulatie = {len(startpopulation)}")
+        startpopulation2 = []
+        for sol in startpopulation:
+            score_sol = calculate_cost(sol)
+            startpopulation2.append([score_sol, sol])
+            
+        #print(startpopulation2)
+
+        startpopulation2 = sorted(startpopulation2, key=lambda x: x[0])
+
+        print(startpopulation2)
+
+        startpopulation = startpopulation2[:10]
+        #startpopulation = [sol for sol[1] in startpopulation]
+        
+        startpopulation2 = []
+        for x in startpopulation:
+            sol = x[1]
+            print(f"SOLUTION = {sol}")
+            startpopulation2.append(sol)
+
+
+        print("########################################")
+        print(startpopulation)
+        startpopulation = startpopulation2
+
+
+        ###
+        # beginpopulatie = [[oplossing1], [oplossing2], etc]
+        # nieuwe populatie = [[score1, [oplossing1]], [score2, [oplossing2]], etc]
+        ###
+
+    #print(f"startpopulatie = {len(startpopulation)}")
     return #startpopulation
 
 
