@@ -1,5 +1,7 @@
 from code.algorithms import Astar
 from code.algorithms import dijkstra
+from code.algorithms import hillclimber as hc
+from code.algorithms import simulatedannealing as sa
 from code.algorithms import genetic_algorithm
 from code.algorithms import genetic
 from code.algorithms import move_random
@@ -47,6 +49,14 @@ if __name__ == "__main__":
     
     # print(f"Execution time of Astar is {result / n} seconds")
     # print(f"Execution time of dijkstra is {result2 / n} seconds")
+
+    # hillclimber = hc.HillClimber(config.Astar_netlist)
+    # print(hillclimber.run(1))
+
+    # simulatedannealing = sa.SimulatedAnnealing(config.Astar_netlist)
+    # print(simulatedannealing.run(1))
+
+
 
 """
     grid_rows = 3
