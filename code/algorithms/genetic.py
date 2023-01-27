@@ -8,6 +8,7 @@ from itertools import permutations
 import math
 
 import copy
+from queue import PriorityQueue
 
 """"Genetic algorithm"""
 #from move_random.py import solution 
@@ -22,7 +23,7 @@ def start_population(netlist):
 # create child by taking random paths from either of parents
 def create_child(p1, p2):
     child = []
-    print(f"P1 = {p1} | P2 = {p2}")
+    #print(f"P1 = {p1} | P2 = {p2}")
     for i in range(len(p1)):
         if coin_toss() == 1:
             child.append(p1[i])
@@ -61,8 +62,9 @@ def genetic(pairs, populatie):
         
         if invalidchild:
             continue
-
-        populatie.append(best_child)
+        
+        if len(best_child) != 0:
+            populatie.append(best_child)
     return populatie
 
 # get paths that need to be mutated
@@ -105,6 +107,10 @@ def fix_child(child, new_path):
             new_child = True
 
             # create new path with greedy
+            start = x[1]
+            end = x[2]
+            #print(f"start = {start} | end = {end}")
+            #new_path = find_path(start, end, visited)
             new_path = greedy2(x, visited)
             
             # if empty list is returned, no valid path can be made with greedy
@@ -185,6 +191,7 @@ def greedy2(points, visited):
     return path
 
 
+
 def count_crossings(child):
         crossing = []
         for path in child:
@@ -243,8 +250,8 @@ def calculate_euclidean(pos1, pos2):
 def create_new_pop(netlist):
     startpopulation = start_population(netlist)
     # print(len(startpopulation))
-    for i in range(50):
-        print(len(startpopulation))
+    # for i in range(50):
+    #     print(len(startpopulation))
     for i in range(10):
         pairs = random_pairs(startpopulation)
 
@@ -262,7 +269,7 @@ def create_new_pop(netlist):
         #print(startpopulation2)
 
         startpopulation2 = sorted(startpopulation2, key=lambda x: x[0])
-
+        pop_with_val = startpopulation2
         #print(startpopulation2)
 
         startpopulation = startpopulation2[:10]
@@ -277,6 +284,7 @@ def create_new_pop(netlist):
 
         # print("########################################")
         # print(startpopulation)
+        
         startpopulation = startpopulation2
 
 
@@ -286,4 +294,5 @@ def create_new_pop(netlist):
         ###
 
     print(f"startpopulatie = {len(startpopulation)}")
+    print(pop_with_val)
     return #startpopulation
