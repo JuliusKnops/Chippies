@@ -70,6 +70,8 @@ def mutate(child):
     new_path = set()
     P = 0.5
     for path in child:
+        if path is None:
+            continue
         if P >= random.uniform(0, 1):
             start = path[0]
             end = path[-1]
@@ -186,6 +188,8 @@ def greedy2(points, visited):
 def count_crossings(child):
         crossing = []
         for path in child:
+            if path is None:
+                continue
             path = path[1:len(path) - 1]
             for node in path:
                 crossing.append(node)
@@ -206,6 +210,8 @@ def calculate_cost(child):
 def count_units(child):
     units = 0
     for path in child:
+        if path is None:
+            continue
         units += len(path) - 1
     return units
 
@@ -238,6 +244,8 @@ def create_new_pop(netlist):
     startpopulation = start_population(netlist)
     # print(len(startpopulation))
     for i in range(50):
+        print(len(startpopulation))
+    for i in range(10):
         pairs = random_pairs(startpopulation)
 
         startpopulation = genetic(pairs, startpopulation)
@@ -279,23 +287,3 @@ def create_new_pop(netlist):
 
     print(f"startpopulatie = {len(startpopulation)}")
     return #startpopulation
-
-
-# if __name__ == "__main__":
-#     chip_nr = 0 # loopt van 0 tot en met 2
-#     netlist_nr = 1 # loopt van 1 tot en met 3
-
-#     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-#     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-    
-#     netlist = Netlist.Netlist(netlist_file, print_file)
-
-#     startpopulation = start_population(netlist)
-#     pairs = random_pairs(startpopulation)
-
-#     startpopulation = p(pairs, startpopulation)
-
-#     print(f"startpopulatie = {startpopulation}")
-#     startpopulation = startpopulation[:10]
-#     print(f"startpopulatie = {startpopulation}")
-
