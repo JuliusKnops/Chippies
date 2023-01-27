@@ -12,14 +12,17 @@ import copy
 """"Genetic algorithm"""
 #from move_random.py import solution 
 
+# create start population by getting random solutions from randomise algorithm
 def start_population(netlist):
     start_population = []
     for i in range(10):
         start_population.append(get_randomize_solution(netlist))
     return start_population
 
-def crossings(p1, p2):
+# create child by taking random paths from either of parents
+def create_child(p1, p2):
     child = []
+    print(f"P1 = {p1} | P2 = {p2}")
     for i in range(len(p1)):
         if coin_toss() == 1:
             child.append(p1[i])
@@ -27,25 +30,11 @@ def crossings(p1, p2):
             child.append(p2[i])
     return child 
 
+# return 50/50 chance value
 def coin_toss():
     return random.randint(0, 1)
 
-def p(pairs, populatie):
-    #print(f"PAIRS = {pairs}")
-    for i in pairs:
-        # pairs = [(p1, p2), ()]
-        # i = (p1, p2)
-        #print(f"PARENT 1 = {i[0]}")
-        #print(f"PARENT 2 = {i[1]}")
-        child = crossings(i[0], i[1])
-        child, path = mutate(child)
-        best_child = create_path(child, path)
-        # voeg toe aan verzameling / populatie
-        print("ADD CHILD")
-        populatie.append(best_child)
-        print(f"grootte populatie = {len(populatie)}")
-    return populatie
-
+# create pairs of given population
 def random_pairs(populationX):
     pairs = []
     population = copy.deepcopy(populationX)
@@ -54,45 +43,69 @@ def random_pairs(populationX):
                         population.pop(random.randrange(len(population)))))
     return pairs  
 
+# 
+def genetic(pairs, populatie):
+    # for each pair
+    for i in pairs:
+        # create child solution
+        child = create_child(i[0], i[1])
+        # mutate child
+        child, path = mutate(child)
+        best_child = fix_child(child, path)
 
+        invalidchild = False
+        for x in best_child:
+            if x is None:
+                invalidchild = True 
+                break
+        
+        if invalidchild:
+            continue
+
+        populatie.append(best_child)
+    return populatie
+
+# get paths that need to be mutated
 def mutate(child):
     new_path = set()
     P = 0.5
     for path in child:
         if P >= random.uniform(0, 1):
-            print(f"PATH = {path}")
             start = path[0]
             end = path[-1]
-            print("TEST")
             new_path.add((child.index(path), start, end))
             child[child.index(path)] = None
     
-    # check if valid child
-
     return child, new_path
 
-def create_path(child, new_path):
+def fix_child(child, new_path):
     location_paths = new_path
     score_child = 9999999999
     permutations_paths = list(permutations(new_path))
+    best_child = []
+
+
+    # for each possible permutations for child
     for order in permutations_paths:
        
         visited = set()
         add_paths_child = []
-        
-        for x in child:
-            if x is None:
+        new_child = True
+        # create visited nodes
+        for paths in child:
+            if paths is None:
                 continue
-            for p in x:
-                
-                visited.add(p)
+            for nodes in paths:
+                visited.add(nodes)
 
+        # for all new paths in order
         for x in order:
-            # Create new paths with greedy
             new_child = True
+
+            # create new path with greedy
             new_path = greedy2(x, visited)
-            #print(f"NEW PATH = {new_path}")
             
+            # if empty list is returned, no valid path can be made with greedy
             if new_path == []:
                 new_child = False
                 break
@@ -103,24 +116,28 @@ def create_path(child, new_path):
         
             add_paths_child.append(new_path)
             
-        
-
-        if len(add_paths_child) == 0:
+            
+        if len(add_paths_child) == 0 and new_child:
             new_child = True
 
         if new_child:
             #print(f"location paths = {location_paths}")
             for x in location_paths:
-                
+                #print(f"x = {x}")
                 for p in add_paths_child:
                     #print(f"p = {p}")
                     if p[0] == x[1] and p[-1] == x[2]:
-                        child[x[0]] = p 
-        
+                        #print(f"{child[x[0]]} = {p}")
+                        child[x[0]] = p
+
+            for i in child:
+                if i is None:
+                    print("NONE PATH FOUND")
+                    
             #print(child)
         
             current_child_score = calculate_cost(child)
-            if current_child_score < score_child:
+            if current_child_score <= score_child:
                 score_child = current_child_score
                 best_child = child
         
@@ -128,43 +145,9 @@ def create_path(child, new_path):
     # beste returnen.
     # print(best_child)
     # print(calculate_cost(best_child))
+    # if best_child:
     return best_child
-
-
-def count_crossings(child):
-        crossing = []
-        for path in child:
-            path = path[1:len(path) - 1]
-            for node in path:
-                crossing.append(node)
-        
-        return len(crossing) - len(set(crossing))
-
-def is_valid(child):
-    valid = []
-    for path in child:
-        for node in range(len(path) - 1):
-            valid.append((path[node], path[node + 1]))
-
-    return len(valid) == len(set(valid))    
-
-def calculate_cost(child):
-    return count_units(child) + 300 * count_crossings(child)
-
-def count_units(child):
-    units = 0
-    for path in child:
-        units += len(path) - 1
-    return units
-
-
-# functies aanpassen naar class functies -> class variables aanmaken voor visited en path, zodat aantal parameters naar netlist en location gaan.
-def out_of_bounds(current_node):
-    return not (0 <= current_node[0] <= 8 and 0 <= current_node[1] <= 8 and 0 <= current_node[2] <= 7)
-# functies aanpassen naar class functies -> class variables aanmaken voor visited en path, zodat aantal parameters naar netlist en location gaan.
-def valid_node(current_node, visited, path):
-    return (not (current_node in visited or current_node in path)) and not out_of_bounds(current_node)
-
+   
 ###
 def greedy2(points, visited):
     start_point = points[1]
@@ -198,6 +181,40 @@ def greedy2(points, visited):
 
         path, path_found = check_goal(new_pos, path, end_point)
     return path
+
+
+def count_crossings(child):
+        crossing = []
+        for path in child:
+            path = path[1:len(path) - 1]
+            for node in path:
+                crossing.append(node)
+        
+        return len(crossing) - len(set(crossing))
+
+def is_valid(child):
+    valid = []
+    for path in child:
+        for node in range(len(path) - 1):
+            valid.append((path[node], path[node + 1]))
+
+    return len(valid) == len(set(valid))    
+
+def calculate_cost(child):
+    return count_units(child) + 300 * count_crossings(child)
+
+def count_units(child):
+    units = 0
+    for path in child:
+        units += len(path) - 1
+    return units
+
+# functies aanpassen naar class functies -> class variables aanmaken voor visited en path, zodat aantal parameters naar netlist en location gaan.
+def out_of_bounds(current_node):
+    return not (0 <= current_node[0] <= 8 and 0 <= current_node[1] <= 8 and 0 <= current_node[2] <= 7)
+# functies aanpassen naar class functies -> class variables aanmaken voor visited en path, zodat aantal parameters naar netlist en location gaan.
+def valid_node(current_node, visited, path):
+    return (not (current_node in visited or current_node in path)) and not out_of_bounds(current_node)
     
 def calculate_wire_pos(new_wire_location, random_move, dir):
     if dir == '+':
@@ -219,13 +236,13 @@ def calculate_euclidean(pos1, pos2):
 
 def create_new_pop(netlist):
     startpopulation = start_population(netlist)
-    print(len(startpopulation))
+    # print(len(startpopulation))
     for i in range(50):
         pairs = random_pairs(startpopulation)
 
-        startpopulation = p(pairs, startpopulation)
+        startpopulation = genetic(pairs, startpopulation)
 
-        print(f"startpopulatie = {len(startpopulation)}")
+        # print(f"startpopulatie = {len(startpopulation)}")
 
         # [score, [[(), ()], [(), ()]]]
 
@@ -238,7 +255,7 @@ def create_new_pop(netlist):
 
         startpopulation2 = sorted(startpopulation2, key=lambda x: x[0])
 
-        print(startpopulation2)
+        #print(startpopulation2)
 
         startpopulation = startpopulation2[:10]
         #startpopulation = [sol for sol[1] in startpopulation]
@@ -246,12 +263,12 @@ def create_new_pop(netlist):
         startpopulation2 = []
         for x in startpopulation:
             sol = x[1]
-            print(f"SOLUTION = {sol}")
+            #print(f"SOLUTION = {sol}")
             startpopulation2.append(sol)
 
 
-        print("########################################")
-        print(startpopulation)
+        # print("########################################")
+        # print(startpopulation)
         startpopulation = startpopulation2
 
 
@@ -260,7 +277,7 @@ def create_new_pop(netlist):
         # nieuwe populatie = [[score1, [oplossing1]], [score2, [oplossing2]], etc]
         ###
 
-    #print(f"startpopulatie = {len(startpopulation)}")
+    print(f"startpopulatie = {len(startpopulation)}")
     return #startpopulation
 
 
