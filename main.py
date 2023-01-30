@@ -18,18 +18,91 @@ import config
 import timeit
 
 import config
+import csv
 
 if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
-    netlist_nr = 2 # loopt van 1 tot en met 3
+    netlist_nr = 1 # loopt van 1 tot en met 3
 
     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
     
-    netlist = netlist.Netlist(netlist_file, print_file)
+    netlists = netlist.Netlist(netlist_file, print_file)
     
     
-    print(genetic.create_new_pop(netlist))
+    print(random_algo.get_randomize_solution(netlists))
+
+    # netlist_nr = 1
+    # for chip_nr in range(3):
+    #     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
+    #     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
+    #     netlists = netlist.Netlist(netlist_file, print_file)
+    #     found_solution, found_cost = random_algo.get_randomize_solution(netlists)
+
+
+    #     header = ['solution']
+    #     with open(f'chip_{chip_nr}.csv', 'w', encoding='UTF8') as f:
+    #         writer = csv.writer(f)
+    #         writer.writerow(header)
+    #         # for row in found_solution:
+    #         writer.writerow([found_cost])
+    #         writer.writerow([found_solution])
+        
+    #     print(f"SOLVED {chip_nr}")
+
+
+
+
+    """
+    ###
+    # VISUALISATIE RESULTATEN
+    ###
+    # import csv
+    # csv_values = []
+    # for batchID in range(3):
+    #     print(f"BATCH RUN: {batchID}")
+    #     batch_values = []
+    #     BestCost = 10000
+    #     WorstCost = 0
+    #     RunCost = []
+    #     n_runs = 2500
+    #     AverageCost = 0
+    #     StdDev = 0
+    #     for runID in range(n_runs):
+    #         if runID % 100 == 0:
+    #             print(f"RUN: {runID}")
+    #         cost, solution = random_algo.get_randomize_solution(netlist)
+    #         RunCost.append(cost)
+    #         if cost < BestCost:
+    #             BestSolution = solution
+    #         BestCost = min(BestCost, cost)
+    #         WorstCost = max(WorstCost, cost)
+            
+    #     StdDev = np.std(RunCost)
+    #     AverageCost = sum(RunCost) / len(RunCost)
+    #     batchRun = [batchID, AverageCost, StdDev, BestCost, WorstCost, BestSolution]
+    #     csv_values.append(batchRun)
+    
+
+    # header = ['batchID', 'AverageCost', 'StdDev', 'BestCost', 'WorstCost', 'runID', 'runCost']
+    # with open('BatchRuns.csv', 'w', encoding='UTF8') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(header)
+    #     for row in csv_values:
+    #         writer.writerow(row)
+    """
+
+
+
+
+
+
+
+
+    
+
+
+
     # visualisation.visualisation( netlist.gate_locations, chip_nr)
     # print(f"netlist.gates = {netlist.gates}")
 

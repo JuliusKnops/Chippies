@@ -16,7 +16,7 @@ from queue import PriorityQueue
 # create start population by getting random solutions from randomise algorithm
 def start_population(netlist):
     start_population = []
-    for i in range(10):
+    for i in range(50):
         start_population.append(get_randomize_solution(netlist))
     return start_population
 
@@ -190,7 +190,52 @@ def greedy2(points, visited):
         path, path_found = check_goal(new_pos, path, end_point)
     return path
 
+def find_path(start, end, visited):
+    # Create a 3D list to keep track of visited cells
+    n = 7
+    m = 7
+    l = 7
+    #visited = [[[False for _ in range(n+1)] for _ in range(m+1)] for _ in range(l+1)]
+    # Create a priority queue to store next cells to visit
+    q = PriorityQueue()
+    # Create a dictionary to keep track of the previous cell visited for each cell
+    prev = {}
+    # Add the starting node to the priority queue with a priority of 0
+    q.put((0, start))
+    # Mark the starting node as visited
+    visited.add((start[0],start[1],start[2]))
+    # Set the distance from the start node to 0
+    dist = 0
 
+    while not q.empty():
+        # Get the next cell to visit
+        curr_dist, curr_cell = q.get()
+        # Check if the current cell is the end node
+        if curr_cell == end:
+            # Trace back the path from the end node to the start node
+            path = []
+            while curr_cell in prev:
+                path.append(curr_cell)
+                curr_cell = prev[curr_cell]
+            # Return the reversed path list
+            path.append(start)
+            return path[::-1]
+        # Iterate through each direction (x, y, z)
+        for dx, dy, dz in [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]:
+            # Calculate the new cell location
+            new_x, new_y, new_z = curr_cell[0] + dx, curr_cell[1] + dy, curr_cell[2] + dz
+            # Check if the new cell is not out of the grid and not an obstacle
+            if 0 <= new_x <= n and 0 <= new_y <= m and 0 <= new_z <= l and (new_x, new_y, new_z) not in visited:
+                # if not visited[new_x][new_y][new_z]:
+                # Set the previous cell for the new cell as the current cell
+                prev[(new_x, new_y, new_z)] = curr_cell
+                # Mark the new cell as visited
+                visited.add((new_x, new_y, new_z)) #visited[new_x][new_y][new_z] = True
+                # Add the new cell to the priority queue with a priority of curr_dist + 1
+                q.put((curr_dist + 1, (new_x, new_y, new_z)))
+
+    # Return "Path not found" if the end node has not been reached
+    return []
 
 def count_crossings(child):
         crossing = []
@@ -252,7 +297,7 @@ def create_new_pop(netlist):
     # print(len(startpopulation))
     # for i in range(50):
     #     print(len(startpopulation))
-    for i in range(10):
+    for i in range(100):
         pairs = random_pairs(startpopulation)
 
         startpopulation = genetic(pairs, startpopulation)
@@ -272,7 +317,7 @@ def create_new_pop(netlist):
         pop_with_val = startpopulation2
         #print(startpopulation2)
 
-        startpopulation = startpopulation2[:10]
+        startpopulation = startpopulation2[:50]
         #startpopulation = [sol for sol[1] in startpopulation]
         
         startpopulation2 = []
@@ -294,5 +339,5 @@ def create_new_pop(netlist):
         ###
 
     print(f"startpopulatie = {len(startpopulation)}")
-    print(pop_with_val)
+    print(pop_with_val[0])
     return #startpopulation

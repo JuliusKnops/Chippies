@@ -5,7 +5,7 @@ class Netlist():
     def __init__(self, netlist_sourcefile, print_sourcefile):
         self.gates = self.load_gates(print_sourcefile)
         self.load_connections(netlist_sourcefile)
-        self.invalid_gates = self.invalid_gates()
+        self.invalid_gates_list = self.invalid_gates()
         self.dimension = self.get_dimensions()
 
         self.solution = []
@@ -65,7 +65,7 @@ class Netlist():
     def invalid_gates(self):
         invalid_nodes = set()
         for gate in self.gates.values():
-            for z in range(gate.z):
+            for z in range(gate.z + 1):
                 invalid_nodes.add((gate.x, gate.y, z))
         return invalid_nodes
 
@@ -127,7 +127,7 @@ class Netlist():
         return self.dimension[0][2]
     
     def set_solution(self, solution):
-        self.solution.append(solution)
+        self.solution = solution
 
     # self.solution is de huidige oplossing van het pad met begin gates en eind gates erin
     # dit kan ook vervangen worden voor een lijst waarin deze niet standaard in zitten, dus
