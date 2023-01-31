@@ -9,8 +9,8 @@ Astar = True
 Hillclimber = True 
 SimulatedAnnealing = True
 Random = True
-Visualize = True
 
+Visualize = True
 experiment = True
 iterations = 10
 
