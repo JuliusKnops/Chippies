@@ -1,8 +1,8 @@
 import random
 import copy
-import tqdm
+from tqdm import tqdm
 
-from .find_paths import *
+from .PathFinder_Astar_Util import PathFinder_Aster_util as PA_util
 
 class HillClimber(object):
     """
@@ -29,6 +29,7 @@ class HillClimber(object):
     def mutate_child(self):
         """
         Returns mutated children by finding all nearest neighbour solutions.
+        Then suffles them to reduce bias.
         """
         nearest_neighbours = []
         order = self.current_connection_order
@@ -39,6 +40,7 @@ class HillClimber(object):
                 neighbour[i] = order[j]
                 neighbour[j] = order[i]
                 nearest_neighbours.append(neighbour)
+        random.shuffle(nearest_neighbours)
         return nearest_neighbours
         
     def mutate_child_by_random_swap(self):
@@ -76,31 +78,53 @@ class HillClimber(object):
         """
         Runs the algororithms i times, with i being the given number of
         iterations.
+        Goes through all neighbours, if a better one is found continues the iteration.
+        Ignores invalid children as it is not a solution.
         Returns the best found path and its cost.
         """
         # reset netlist before running
         self.netlist.reset()
         
-        current_path, current_cost = find_all_paths(self.current_connection_order,
-                                                    self.netlist)
+        # find first random solution
+        current_path, current_cost = PA_util.get_solution(self.netlist)
+            
         print(current_cost)
         
-        # reset netlist
-        self.netlist.reset()
-    
-        for i in tqdm(range(iterations)):
-            # get nearest connection order neighbours
-            new_children = self.mutate_child()
-
-            for new_child in tqdm(new_children):
-                new_path, new_cost = find_all_paths(new_child,
-                                                    self.netlist)
-                if new_cost < current_cost:
-                    self.current_connection_order = new_child
-                    current_path, current_cost = new_path, new_cost
-                    print(new_cost)
-
+        i = 0
+        
+        with tqdm(total=iterations) as pbar:
+            while i < iterations:
                 # reset netlist
                 self.netlist.reset()
+
+                # get nearest connection order neighbours
+                new_children = self.mutate_child()
+
+                for new_child in new_children:
+                    
+                    # TODO: more elegant
+                    if i >= iterations:
+                        break
+
+                    # reset netlist
+                    self.netlist.reset()
+
+                    new_path, new_cost = PA_util.find_all_paths(new_child,
+                                                                self.netlist)
+                    if not new_path:
+                        continue
+                    
+                    i += 1
+                    pbar.update(1)
+                    
+                    if new_cost < current_cost:
+                        self.current_connection_order = new_child
+                        current_path, current_cost = new_path, new_cost
+                        print(new_cost)
+                        break
+                    
+
+                else:
+                    return current_path, current_cost
 
         return current_path, current_cost
