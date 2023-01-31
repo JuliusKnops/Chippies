@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     if config.Astar_sample:
         solutions = {}
-        for i in range(1):
+        for i in range(10):
             random_solution = PA_util.PathFinder_Aster_util.find_cheapest_path_from_sample(config.Astar_netlist, 
                                                                                             PathFinder=Astar.PathFinder_Astar, 
                                                                                             Node=Astar.Node_Astar, random_sample_max_iter = config.Astar_sample)
