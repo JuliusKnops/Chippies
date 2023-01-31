@@ -18,7 +18,7 @@ import time
 
 NetlistObject = TypeVar("NetlistObject")
 
-def random_algo(netlist: NetlistObject):
+def random_algo(netlist: NetlistObject) -> Tuple(int, list):
     """
     Returns a random solution for given gates and netlist
     """
