@@ -169,3 +169,4 @@ class Netlist():
         self.used_connections = set()
         self.n = 0
         self.k = 0
+        self.gate_locations = set([(int(g.x), int(g.y), g.z) for g in self.gates.values()])
