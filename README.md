@@ -23,7 +23,10 @@ python main.py
 Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en hoe je je kan navigeren:
 - **/code**: map met alle code van dit project
     - **/code/algorithms**: map met algoritmes voor het project
-    - 
+    - **/code/classes**: map bevat classes gates en netlist
+    - **/code/visualisation**: bevat functie voor 3d visualisatie van oplossing
+- **/data**: bevat alle databestanden van elke chip die nodig zijn om oplossing te genereren en te visualiseren
+
 ## Testen
 
 template aanroep van main.py
