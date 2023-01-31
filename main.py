@@ -16,7 +16,8 @@ from code.visualisation import visualisation
 
 import config
 import timeit
-
+import time
+import subprocess
 import csv
 
 if __name__ == "__main__":
@@ -29,13 +30,16 @@ if __name__ == "__main__":
 
     if config.Random:
         if config.experiment:
-            for i in range(config.iterations):
-                solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
-                
-                with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'a', encoding='UTF8') as f:
-                    writer = csv.writer(f)
-                    for row in [[solution_cost, solution_connections]]:
-                        writer.writerow(row)
+            start = time.time()
+            while time.time() - start < config.experiment_duration:
+                for i in range(config.iterations):
+                    solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
+                    
+                    with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'a', encoding='UTF8') as f:
+                        writer = csv.writer(f)
+                        for row in [[solution_cost, solution_connections]]:
+                            writer.writerow(row)
+                break
 
             visualisation.create_histogram(chip_nr, netlist_nr)
 

@@ -19,6 +19,7 @@ Random = True
 
 Visualize = True
 experiment = True
+experiment_duration = 3600
 iterations = 10
 
 """
