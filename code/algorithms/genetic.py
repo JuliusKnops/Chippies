@@ -28,7 +28,7 @@ chance to mutate -> variable
 
 """
 
-MAX_INT = sys.maxint
+MAX_INT = 99999999 #sys.maxint
 P_MUTATE = 0.1
 POPULATION_SIZE = 10
 N_ITERATIONS = 3

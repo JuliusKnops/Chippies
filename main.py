@@ -17,22 +17,49 @@ from code.visualisation import visualisation
 import config
 import timeit
 
-import config
 import csv
 
 if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
     netlist_nr = 3 # loopt van 1 tot en met 3
-
+    
     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-    
     netlists = netlist.Netlist(netlist_file, print_file)
-    
-    
-    # print(random_algo.get_randomize_solution(netlists))
 
-    print(genetic.create_new_pop(netlists))
+    if config.Random:
+        if config.experiment:
+            for i in range(config.iterations):
+                solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
+                
+                with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'a', encoding='UTF8') as f:
+                    writer = csv.writer(f)
+                    for row in [[solution_cost, solution_connections]]:
+                        writer.writerow(row)
+
+            visualisation.create_histogram(chip_nr, netlist_nr)
+
+        solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
+
+        if config.Visualize:
+            visualisation.visualisation(solution_connections, solution_gates, chip_nr)
+            
+    if config.Astar:
+        pass 
+
+
+    # chip_nr = 0 # loopt van 0 tot en met 2
+    # netlist_nr = 3 # loopt van 1 tot en met 3
+    
+    # netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
+    # print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
+    
+    # netlists = netlist.Netlist(netlist_file, print_file)
+    
+    
+    # # print(random_algo.get_randomize_solution(netlists))
+
+    # print(genetic.create_new_pop(netlists))
 
     # netlist_nr = 1
     # for chip_nr in range(3):
@@ -40,7 +67,6 @@ if __name__ == "__main__":
     #     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
     #     netlists = netlist.Netlist(netlist_file, print_file)
     #     found_solution, found_cost = random_algo.get_randomize_solution(netlists)
-
 
     #     header = ['solution']
     #     with open(f'chip_{chip_nr}.csv', 'w', encoding='UTF8') as f:

@@ -18,7 +18,7 @@ import time
 
 NetlistObject = TypeVar("NetlistObject")
 
-def random_algo(netlist: NetlistObject) -> Tuple(int, list):
+def random_algo(netlist: NetlistObject) -> tuple:
     """
     Returns a random solution for given gates and netlist
     """
@@ -117,7 +117,7 @@ def random_algo(netlist: NetlistObject) -> Tuple(int, list):
 
     # save current solution
     netlist.set_solution(solution)
-    return netlist.calculate_cost(), solution
+    return netlist.calculate_cost(), solution, netlist.invalid_gates_list
     
 def reset_possible_moves(reset: bool, possible_moves: list) -> list:
     """

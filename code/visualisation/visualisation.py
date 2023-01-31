@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d 
 
+import csv
+
 def visualisation(solution, gates, chip_nr):
     """function for visualising chips
 
@@ -28,7 +30,7 @@ def visualisation(solution, gates, chip_nr):
     for i in gates:
         x_gates.append(i[0])
         y_gates.append(i[1])
-        ax.scatter(x_gates, y_gates, c='red', s=25)
+    ax.scatter(x_gates, y_gates, c='red', s=25)
 
     # append coördinates in right list for the pathways
     for i in solution:
@@ -41,5 +43,22 @@ def visualisation(solution, gates, chip_nr):
             z_unit.append(j[2])
         ax.plot(x_unit, y_unit, z_unit)
     # plot figure
+    plt.savefig(f"{chip_nr}_solution.png")
     plt.show()
 
+
+def create_histogram(chip_nr, netlist_nr):
+    cost_list = []
+    with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'r', encoding='UTF8') as f:
+        csv_reader = csv.reader(f)
+
+        for row in csv_reader:
+            try:
+                cost_list.append(int(row[0]))
+            except:
+                pass
+    
+    plt.clf()
+    plt.hist(cost_list, 10)
+    plt.title(f"Chip: {chip_nr} netlist: {netlist_nr}")
+    plt.savefig(f"{chip_nr} {netlist_nr}.png")
