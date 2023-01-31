@@ -117,7 +117,7 @@ def random_algo(netlist: NetlistObject):
 
     # save current solution
     netlist.set_solution(solution)
-    return solution, netlist.calculate_cost(), netlist.is_valid()
+    return netlist.calculate_cost(), solution
     
 
 def reset_possible_moves(reset: bool, possible_moves: list) -> list:

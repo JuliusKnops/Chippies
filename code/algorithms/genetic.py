@@ -16,14 +16,14 @@ from queue import PriorityQueue
 # create start population by getting random solutions from randomise algorithm
 def start_population(netlist):
     start_population = []
-    for i in range(50):
+    for i in range(10):
         start_population.append(get_randomize_solution(netlist))
     return start_population
 
 # create child by taking random paths from either of parents
 def create_child(p1, p2):
     child = []
-    #print(f"P1 = {p1} | P2 = {p2}")
+    # print(f"P1 = {p1} | P2 = {p2}")
     for i in range(len(p1)):
         if coin_toss() == 1:
             child.append(p1[i])
@@ -297,7 +297,7 @@ def create_new_pop(netlist):
     # print(len(startpopulation))
     # for i in range(50):
     #     print(len(startpopulation))
-    for i in range(100):
+    for i in range(10):
         pairs = random_pairs(startpopulation)
 
         startpopulation = genetic(pairs, startpopulation)
@@ -317,7 +317,7 @@ def create_new_pop(netlist):
         pop_with_val = startpopulation2
         #print(startpopulation2)
 
-        startpopulation = startpopulation2[:50]
+        startpopulation = startpopulation2[:10]
         #startpopulation = [sol for sol[1] in startpopulation]
         
         startpopulation2 = []

@@ -22,7 +22,7 @@ import csv
 
 if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
-    netlist_nr = 1 # loopt van 1 tot en met 3
+    netlist_nr = 3 # loopt van 1 tot en met 3
 
     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
@@ -30,7 +30,9 @@ if __name__ == "__main__":
     netlists = netlist.Netlist(netlist_file, print_file)
     
     
-    print(random_algo.get_randomize_solution(netlists))
+    # print(random_algo.get_randomize_solution(netlists))
+
+    print(genetic.create_new_pop(netlists))
 
     # netlist_nr = 1
     # for chip_nr in range(3):
