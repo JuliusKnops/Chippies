@@ -21,8 +21,8 @@ python main.py
 ## Structuur
 
 Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en hoe je je kan navigeren:
-- /code: map met alle code van dit project
-    - /code/algorithms: map met algoritmes voor het project
+- **/code**: map met alle code van dit project
+    - **/code/algorithms**: map met algoritmes voor het project
     - 
 ## Testen
 
