@@ -13,10 +13,10 @@ experiment calls multiple solutions to calculate average, std dev
 iterations is number of iterations used in experiment
 """
 Astar_full_implementation = False
-Astar_sample = 0
+Astar_sample = 1000
 Hillclimber = False
 hc_iterations = 100
-SimulatedAnnealing_tune = True
+SimulatedAnnealing_tune = False
 SA_tune_iterations = 30
 SimulatedAnnealing = False
 sa_iterations = 100
