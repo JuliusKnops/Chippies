@@ -33,6 +33,10 @@ if __name__ == "__main__":
             start = time.time()
             while time.time() - start < config.experiment_duration:
                 for i in range(config.iterations):
+                    
+                    if time.time() - start < config.experiment_duration:
+                        break
+
                     solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
                     
                     with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'a', encoding='UTF8') as f:
