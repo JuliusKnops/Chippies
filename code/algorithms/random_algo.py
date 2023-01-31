@@ -18,7 +18,7 @@ import time
 
 NetlistObject = TypeVar("NetlistObject")
 
-def random_algo(netlist: NetlistObject):
+def random_algo(netlist: NetlistObject) -> Tuple(int, list):
     """
     Returns a random solution for given gates and netlist
     """
@@ -119,7 +119,6 @@ def random_algo(netlist: NetlistObject):
     netlist.set_solution(solution)
     return netlist.calculate_cost(), solution
     
-
 def reset_possible_moves(reset: bool, possible_moves: list) -> list:
     """
     When a valid move has been made, the list with possible moves gets resetted to
@@ -169,7 +168,6 @@ def add_to_path(new_wire_location: tuple, path: list) -> Tuple[list, bool]:
 
     return path, reset
     
-
 def check_goal(new_wire_location: tuple, path: list, 
                end_gate: tuple, visited: set) -> Tuple[list, bool]:
     """
@@ -188,7 +186,6 @@ def check_goal(new_wire_location: tuple, path: list,
 
     return path, False
 
-
 def out_of_bounds(edge_connection: tuple, netlist: NetlistObject) -> bool:
     """
     Checks if a move is out of bounds
@@ -200,7 +197,6 @@ def out_of_bounds(edge_connection: tuple, netlist: NetlistObject) -> bool:
             return True
     return False
    
-
 def valid_node(edge_connection: tuple, visited: set, invalid_nodes: set, 
                netlist: NetlistObject, start_gate: tuple, end_gate: tuple) -> bool:
     """
@@ -248,7 +244,6 @@ def check_hard_stuck(hard_stuck: int, n_moves: int) -> bool:
         return True
     return False
 
-
 def check_edge_connection(current: tuple, new: tuple) -> tuple:
     """
     https://www.geeksforgeeks.org/python-sort-list-of-tuple-based-on-sum/
@@ -263,7 +258,6 @@ def check_edge_connection(current: tuple, new: tuple) -> tuple:
             if (lst[j][0]+lst[j][1]+lst[j][2]) > (lst[j+1][0]+lst[j+1][1]+lst[j+1][2]):
                 lst[j], lst[j+1], lst[1] = lst[1], lst[j+1], lst[j]
     return tuple(lst)
-
 
 def get_randomize_solution(netlist: NetlistObject) -> tuple:
     """
