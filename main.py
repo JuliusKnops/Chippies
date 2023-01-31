@@ -7,7 +7,7 @@ from code.algorithms import genetic
 from code.algorithms import move_random
 from code.algorithms import random_algo
 
-from code.algorithms.find_paths import find_cheapest_path
+from code.algorithms import PathFinder_Astar_Util as PA_util
 
 from code.classes import gates
 from code.classes import netlist
@@ -19,6 +19,7 @@ import timeit
 import time
 import subprocess
 import csv
+import json
 
 if __name__ == "__main__":
     chip_nr = 0 # loopt van 0 tot en met 2
@@ -51,9 +52,55 @@ if __name__ == "__main__":
 
         if config.Visualize:
             visualisation.visualisation(solution_connections, solution_gates, chip_nr)
-            
-    if config.Astar:
-        pass 
+    
+    if config.Astar_full_implementation:
+        best_solution = PA_util.PathFinder_Aster_util.find_cheapest_path( config.Astar_netlist, 
+                                                    PathFinder=Astar.PathFinder_Astar, 
+                                                    Node=Astar.Node_Astar)
+        fn = "Astar_best_solution_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+        with open(fn, "w") as outfile:
+            json.dump(best_solution, outfile)
+
+    if config.Astar_sample:
+        solutions = {}
+        for i in range(1):
+            random_solution = PA_util.PathFinder_Aster_util.find_cheapest_path_from_sample(config.Astar_netlist, 
+                                                                                            PathFinder=Astar.PathFinder_Astar, 
+                                                                                            Node=Astar.Node_Astar, random_sample_max_iter = config.Astar_sample)
+            solutions[i] = random_solution
+            fn = "Astar_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+            with open(fn, "w") as outfile:
+                json.dump(solutions, outfile)
+
+    if config.Hillclimber:
+        solutions = {}
+        for i in range(1):
+            hillclimber = hc.HillClimber(config.Astar_netlist)
+            random_solution = hillclimber.run(iterations = config.hc_iterations)
+            solutions[i] = random_solution
+            fn = "Hillclimber_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+            with open(fn, "w") as outfile:
+                json.dump(solutions, outfile)
+
+    if config.SimulatedAnnealing_tune:
+        tune_results = sa.SimulatedAnnealing.get_tune_results(
+                                                            config.Astar_netlist, 
+                                                            [16384, 3600, 512], 
+                                                            [.9, .75, .5], 
+                                                            iterations = config.SA_tune_iterations)
+        get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(tune_results)
+        print(get_best_tuned_result)
+
+    if config.SimulatedAnnealing:
+        solutions = {}
+        for i in range(1):
+            simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 3600, "fastDecrease")
+            simulated_annealing.run(iterations=config.sa_iterations)
+            solutions[i] = random_solution
+            fn = "SimulatedAnnealing_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+            with open(fn, "w") as outfile:
+                json.dump(solutions, outfile)
+        
 
 
     # chip_nr = 0 # loopt van 0 tot en met 2
