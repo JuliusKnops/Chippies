@@ -48,13 +48,13 @@ class PathFinder_Astar(object):
         Else, uses dijkstra. Astar can be converted to dijkstra if the used
         heuristic for estimation is always 0.
         """
-        grid_rows = config.Astar_netlist.dimension[1][0]
-        grid_cols = config.Astar_netlist.dimension[1][1]
-        grid_layers = config.Astar_netlist.dimension[1][2] - 1
+        grid_rows = config.Astar_netlist.dimension[1][0] + 1
+        grid_cols = config.Astar_netlist.dimension[1][1] + 1
+        grid_layers = config.Astar_netlist.dimension[1][2]
 
         # split grid layers in up and down
-        grid_layers_up = int(grid_layers / 2)
-        grid_layers_down = -grid_layers_up
+        grid_layers_up = 7
+        grid_layers_down = 0
 
         # NOTE: __lt__ needs to know the goal node
         global destination_node
@@ -122,7 +122,7 @@ class PathFinder_Astar(object):
             #       are 3! = 6.
             for dx, dy, dz in [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]:
                 x, y, z = current.x + dx, current.y + dy, current.z + dz
-                if not (0 <= x < grid_rows and 0 <= y < grid_cols):
+                if not (0 <= x <= grid_rows and 0 <= y <= grid_cols):
                     continue
                 
                 if not grid_layers_down <= z <= grid_layers_up:
@@ -150,9 +150,8 @@ class PathFinder_Astar(object):
         # Re-add gate before raising exception
         config.Astar_netlist.gate_locations.add( (destination_node.x, destination_node.y, destination_node.z) )
 
-        # NOTE: If there is no valid pad raise exception for easier bugfixing.
-        #       Else it returns None.
-        raise Exception("Failed to find a path.")
+        # Return no path found
+        return (None, None)
 
 
 # if __name__ == '__main__':
