@@ -19,8 +19,7 @@ Je kan de main functie aanroepen met:
 python main.py
 ```
 Voor gebruik van main.py kan je kiezen uit verschillende algoritmes. Dit verander je in config.py
-config.py
-
+##### config.py
 ```python
 """Welk algoritme wil je gebruiken?"""
 Astar = True 
