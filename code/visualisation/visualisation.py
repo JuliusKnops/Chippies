@@ -10,7 +10,7 @@ def visualisation(solution, gates, chip_nr):
         gates (list): list with coördinates of gates
         chip_nr (int): number of chip to indicate dimensions
     """    
-    #Plot 3d grid with dimensions 0 to 7 
+    #Plot 3d grid with dimensions 0 to 7 or 0 to 17
     fig = plt.figure()
     ax = fig.add_subplot(projection= "3d")
     if chip_nr == 0:
