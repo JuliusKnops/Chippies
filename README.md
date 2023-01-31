@@ -18,6 +18,27 @@ Je kan de main functie aanroepen met:
 ```bash
 python main.py
 ```
+Voor gebruik van main.py kan je kiezen uit verschillende algoritmes. Dit verander je in config.py
+##### config.py
+```python
+"""Welk algoritme wil je gebruiken?"""
+Astar = True 
+Hillclimber = True 
+SimulatedAnnealing = True
+Random = True
+
+"""Wil je het visualiseren?"""
+Visualize = True
+experiment = True
+iterations = 10
+
+"""Voor welke chip en netlist wil je experimenteren?"""
+chip_nr = 0 # loopt van 0 tot en met 2
+netlist_nr = 2 # loopt van 1 tot en met 3
+netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
+print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
+Astar_netlist = netlist.Netlist(netlist_file, print_file)
+```
 ## Structuur
 
 Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en hoe je je kan navigeren:
