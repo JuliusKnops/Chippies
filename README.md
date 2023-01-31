@@ -10,7 +10,14 @@ De gebruikte versie van Python voor deze codebase is Python 3.7. In het bestand 
 ```bash
 Pip install -r requirements.txt
 ```
+# Gebruik 
 
+Je kan kiezen tussen onopgeloste voorbeelden van chips (0 tot 2) met verschillende netlist moeilijkheids graad (1 tot 3). 
+Je kan de main functie aanroepen met:
+
+```bash
+python main.py
+```
 # Structuur
 
 Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en hoe je je kan navigeren:
