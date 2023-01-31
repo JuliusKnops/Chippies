@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     if config.Hillclimber:
         solutions = {}
-        for i in range(1):
+        for i in range(10):
             hillclimber = hc.HillClimber(config.Astar_netlist)
             random_solution = hillclimber.run(iterations = config.hc_iterations)
             solutions[i] = random_solution
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     if config.SimulatedAnnealing:
         solutions = {}
-        for i in range(1):
+        for i in range(10):
             simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 3600, "fastDecrease")
             simulated_annealing.run(iterations=config.sa_iterations)
             solutions[i] = random_solution
