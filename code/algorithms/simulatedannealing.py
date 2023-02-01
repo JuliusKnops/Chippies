@@ -94,7 +94,7 @@ class SimulatedAnnealing(HillClimber):
     
     @classmethod
     def get_tune_results(cls, netlist: object, temperatures: list, alphas: list,
-                            iterations = 50) -> None:
+                            iterations = 50) -> defaultdict:
         if not (temperatures or alphas):
             raise Exception("Temperature or Alpha sequence must not be empty.")
         
