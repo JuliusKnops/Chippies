@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
 import itertools
-import more_itertools
+import more_itertools as mit
 import math
 import random
 import warnings
@@ -21,6 +21,7 @@ class PathFinder_Aster_util(object):
         """
         Find all paths in the given order in all_connections using the given
         netlist and algorithm to use.
+        Once a path is found adds the connections to the netlist.
 
         all_connections structure: [ (start_node, end_node), 
                                      (start_node, end_node)...]
@@ -70,78 +71,26 @@ class PathFinder_Aster_util(object):
 
         all_connections = netlist.connection_tuples
 
-        # get all orders to connect the connections
+        # create generator for all orders to connect the connections
         all_connections_permutations = itertools.permutations(all_connections)
 
         # get total number of permutations
         all_permutation_length = math.factorial(len(all_connections))
 
         # find first solution
-        current_path, current_cost = cls.get_solution(netlist)
+        current_path, current_cost = cls.get_random_solution(netlist)
 
         # reset netlist
         netlist.reset()
 
-        # go through each order and find the cheapest path
-        for permutation in tqdm(all_connections_permutations, 
-                                total=all_permutation_length):
-
-            # reset visited nodes
-            netlist.reset()
-
-            new_path, new_cost = cls.find_all_paths(permutation, netlist,
-                                                PathFinder=PathFinder, Node = Node)
-
-            # if not path, skip
-            if not new_path:
-                continue
-
-            if new_cost < current_cost:
-                current_path = new_path
-                current_cost = new_cost
-
+        current_path, current_cost = cls.get_best_path(
+                                                current_path, current_cost,
+                                                netlist,
+                                                all_connections_permutations,
+                                                all_permutation_length,
+                                                PathFinder = PathFinder, 
+                                                Node = Node)
         return current_path, current_cost
-    
-    @classmethod
-    def get_all_valid_path_costs(   cls, netlist: object, 
-                                    PathFinder = Astar.PathFinder_Astar, 
-                                    Node = Astar.Node_Astar ) -> list:
-        """
-        Finds path and cost by trying all possible permutations of connection
-        order.
-        """
-        
-        # reset visited nodes before starting
-        # NOTE: probs not needed
-        netlist.reset()
-
-        all_connections = netlist.connection_tuples
-
-        # get all orders to connect the connections
-        all_connections_permutations = itertools.permutations(all_connections)
-
-        # get total number of permutations
-        all_permutation_length = math.factorial(len(all_connections))
-        
-        all_path_costs = []
-        
-        # go through each order and find the cheapest path
-        for permutation in tqdm(all_connections_permutations, 
-                                total=all_permutation_length):
-
-            # reset visited nodes
-            netlist.reset()
-
-            new_path, new_cost = cls.find_all_paths(permutation, netlist,
-                                                PathFinder=PathFinder, Node = Node)
-
-            # if not path, skip
-            if not new_path:
-                continue 
-            
-            all_path_costs.append((new_path, new_cost))
-
-        return all_path_costs
     
     @classmethod
     def find_cheapest_path_from_sample( cls, netlist: object,
@@ -169,7 +118,7 @@ class PathFinder_Aster_util(object):
         if all_permutation_length < random_sample_max_iter:
             raise Exception("not enough permutations")
 
-        # raise warning is sample size not
+        # raise warning if sample size not beneath ratio treshold
         ratio_size = cls.population_sample_size_ratio * all_permutation_length
         if ratio_size <= random_sample_max_iter:
             msg = ( "Inappropriate usage of function detected: "+
@@ -178,48 +127,34 @@ class PathFinder_Aster_util(object):
             warnings.warn(msg)
 
         # find first solution
-        current_path, current_cost = cls.get_solution(netlist)
+        current_path, current_cost = cls.get_random_solution(netlist)
 
         # reset netlist
         netlist.reset()
         
         # sample
         random_permutations = set()
-        # create random list of permutations, including original all_connections
+
+        # create random list of permutations from generator
         while len(random_permutations) < random_sample_max_iter:
-            # calculate the chance we select the original permutation
-            chance = 1 / all_permutation_length
-            if random.random() <= chance:
-                random_permutations.add(tuple(all_connections))
-            else:
-                rp = more_itertools.random_permutation(all_connections)
-                random_permutations.add(rp)
+            rp = mit.random_permutation(all_connections)
+            random_permutations.add(rp)
 
         random_permutations = tuple(random_permutations)
 
-        # go through each order and find the cheapest path
-        for permutation in tqdm(random_permutations):
-
-            # reset visited nodes
-            netlist.reset()
-
-            new_path, new_cost = cls.find_all_paths(permutation, netlist,
-                                                    PathFinder=PathFinder, 
-                                                    Node = Node)
-
-            # if not path, skip
-            if not new_path:
-                continue
-
-            if new_cost < current_cost:
-                current_path = new_path
-                current_cost = new_cost
-
+        current_path, current_cost = cls.get_best_path(
+                                                current_path, current_cost,
+                                                netlist,
+                                                random_permutations,
+                                                len(random_permutations),
+                                                PathFinder = PathFinder, 
+                                                Node = Node)
         return current_path, current_cost
-    
+
     @classmethod
-    def get_solution(cls, netlist: object, PathFinder = Astar.PathFinder_Astar, 
-                        Node = Astar.Node_Astar) -> tuple:
+    def get_random_solution(cls, netlist: object, 
+                            PathFinder = Astar.PathFinder_Astar, 
+                            Node = Astar.Node_Astar) -> tuple:
         """
         Returns random solution.
         Does this by trying different random connection orders until first one
@@ -239,23 +174,15 @@ class PathFinder_Aster_util(object):
             # reset visited nodes
             netlist.reset()
 
-            # makes sure the original permutation is also used
-            chance = 1 / all_permutation_length
-            if random.random() <= chance:
-                netlist.connection_tuples = all_connections
-                current_path, current_cost = cls.find_all_paths(all_connections,
-                                                        netlist,
-                                                        PathFinder=PathFinder,
-                                                        Node = Node)
-            else:
-                rp = more_itertools.random_permutation(all_connections)
-                netlist.connection_tuples = list(rp)
-                current_path, current_cost = cls.find_all_paths(
-                                                        rp,
-                                                        netlist,
-                                                        PathFinder = PathFinder,
-                                                        Node = Node
-                                                                )
+            # choice random permutation, includes all_connection
+            rp = mit.random_permutation(all_connections)
+            netlist.connection_tuples = list(rp)
+            current_path, current_cost = cls.find_all_paths(
+                                                    rp,
+                                                    netlist,
+                                                    PathFinder = PathFinder,
+                                                    Node = Node
+                                                            )
             if current_path:
                 return current_path, current_cost
 
@@ -282,5 +209,36 @@ class PathFinder_Aster_util(object):
 
                 # reset visited nodes
                 netlist.reset()
+
+        return current_path, current_cost
+
+    @classmethod
+    def get_best_path(cls, current_path: list, current_cost: int,
+                        netlist: object,
+                        permutations: itertools.permutations,
+                        total: int,
+                        PathFinder = Astar.PathFinder_Astar, 
+                        Node = Astar.Node_Astar) -> tuple:
+        """
+        Find best path from the given permutations iterable. Can be a genetor or
+        a list from the itertools.permutation generator.
+        """
+        # go through each order and find the cheapest path
+        for permutation in tqdm(permutations, total = total):
+
+            # reset visited nodes
+            netlist.reset()
+
+            new_path, new_cost = cls.find_all_paths(permutation, netlist,
+                                                    PathFinder=PathFinder, 
+                                                    Node = Node)
+
+            # if not path, skip
+            if not new_path:
+                continue
+
+            if new_cost < current_cost:
+                current_path = new_path
+                current_cost = new_cost
 
         return current_path, current_cost
