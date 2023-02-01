@@ -37,13 +37,8 @@ class Netlist():
         ###############################
 
 
-        #####
-        # Toevoegen van berekende functies zoals kosten, aantal units en valid als boolean.
-        # functie aanroepen en dit opslaan onder class attribute
-        #####
-
     # reads the print.csv file and creates the gate objects with given coordinates
-    def load_gates(self, sourcefile):
+    def load_gates(self, sourcefile: str) -> dict:
         gates = {}
 
         with open(sourcefile) as in_file:
@@ -60,7 +55,7 @@ class Netlist():
         return gates
     
     # reads the netlist.csv file and add to each gate the given connections
-    def load_connections(self, sourcefile):
+    def load_connections(self, sourcefile: str):
         with open(sourcefile) as in_file:
             reader = csv.DictReader(in_file)
             for row in reader:
@@ -69,7 +64,7 @@ class Netlist():
                 gate_b = connections[1]
                 self.gates[gate_a].add_connections(self.gates[gate_b])
 
-    def get_random_gates(self):
+    def get_random_gates(self) -> dict:
         """
         Generates random gates. Number of gates based on config settings.
         """
@@ -115,14 +110,14 @@ class Netlist():
     # returns a set with invalid nodes.
     # if a gate is located on a node with a z > 0, than every node
     # below the gate is also considered as invalid
-    def invalid_gates(self):
+    def invalid_gates(self) -> set:
         invalid_nodes = set()
         for gate in self.gates.values():
             for z in range(gate.z + 1):
                 invalid_nodes.add((gate.x, gate.y, z))
         return invalid_nodes
 
-    def get_connection_tuples(self):
+    def get_connection_tuples(self) -> list:
         connection_set = set()
         for chip in self.gates:
             current_x_loc = self.gates[chip].x
@@ -138,11 +133,11 @@ class Netlist():
         return [ tuple(c) for c in connection_set ]
     
     # returns all gate objects that are in the current netlist dictionary
-    def get_gates(self):
+    def get_gates(self) -> list:
         return self.gates.values()
 
     # calculates the minimum dimension of the chip.
-    def get_dimensions(self):
+    def get_dimensions(self) -> tuple:
     # dimensies ook mogelijk als parameter invoeren wanneer netlist class aangemaakt word
     # standaard x, y en z op 0 zetten, tenzij die als parameters worden meegeven
         x_max = 0
@@ -185,7 +180,7 @@ class Netlist():
     # self.solution is de huidige oplossing van het pad met begin gates en eind gates erin
     # dit kan ook vervangen worden voor een lijst waarin deze niet standaard in zitten, dus
     # dan is het gelijk len(self.solution) - len(set(self.solution)) kunnen returnen
-    def count_crossings(self):
+    def count_crossings(self) -> int:
         crossing = []
         for path in self.solution:
             path = path[1:len(path) - 1]
@@ -194,7 +189,7 @@ class Netlist():
         
         return len(crossing) - len(set(crossing))
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         valid = []
         for path in self.solution:
             for node in range(len(path) - 1):
@@ -202,16 +197,16 @@ class Netlist():
 
         return len(valid) == len(set(valid))    
     
-    def calculate_cost(self):
+    def calculate_cost(self) -> int:
         return self.count_units() + 300 * self.count_crossings()
 
-    def fitness(self):
+    def fitness(self) -> int:
         try:
             return abs(1/self.calculate_cost())
         except:
             return 0
     
-    def count_units(self):
+    def count_units(self) -> int:
         units = 0
         for path in self.solution:
             units += len(path) - 1
