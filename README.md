@@ -50,7 +50,7 @@ Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en 
 - **/data**: bevat alle databestanden van elke chip die nodig zijn om oplossing te genereren en te visualiseren
 
 ## Algoritmes
--   **Dijkstra algoritme**: algoritme dat het kortste pad vind door 
+-   **####Dijkstra algoritme**: algoritme dat het kortste pad vind door 
 -   **Astar**: algoritme vergelijkbaar met 
 -   **Genetic**: algoritme dat nieuwe generaties van oplossingen genereerd doormiddel van kruisingen en mutaties. 
 -   **Hillclimber**: 
