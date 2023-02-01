@@ -86,16 +86,22 @@ if __name__ == "__main__":
         tune_results = sa.SimulatedAnnealing.get_tune_results(
                                                             config.Astar_netlist, 
                                                             [16384, 3600, 512], 
-                                                            [.9, .75, .5], 
+                                                            [.975, .96, .9, .75, .5], 
                                                             iterations = config.SA_tune_iterations)
         get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(tune_results)
         print(get_best_tuned_result)
+        tune = {}
+        tune["Results"] = tune_results
+        tune["Best_Result"] = get_best_tuned_result
+        fn = "Tuning_result_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+        with open(fn, "w") as outfile:
+            json.dump(tune_results, outfile)
 
     if config.SimulatedAnnealing:
         solutions = {}
-        for i in range(10):
-            simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 3600, "fastDecrease")
-            simulated_annealing.run(iterations=config.sa_iterations)
+        for i in range(25):
+            simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 16384, "geometric", alpha = .96)
+            random_solution = simulated_annealing.run(iterations=config.sa_iterations)
             solutions[i] = random_solution
             fn = "SimulatedAnnealing_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
             with open(fn, "w") as outfile:
