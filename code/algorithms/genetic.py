@@ -5,12 +5,11 @@ Chippies
 Julius Knops, Deniz Mermer, Hidde Brenninkmeijer
 Algoritmen & Heuristieken
 
-A genetic heuristic combined with greedy to create new netlist solutions
+An attempt of a genetic heuristic combined with greedy to create new netlist solutions
 """
 
 import random
 import numpy as np 
-from code.algorithms.random_algo import random_algo
 from code.algorithms.random_algo import get_randomize_solution
 from code.classes.netlist import Netlist
 
@@ -329,8 +328,7 @@ def calculate_euclidean(pos1, pos2):
     euclidean_distance = math.sqrt((pos1[0] - pos2[0])**2 + (pos1[1] - pos2[1])**2 + (pos1[2] - pos2[2])**2)
     return euclidean_distance
 
-
-def create_new_pop(netlist):
+def start_genetic(netlist):
     startpopulation = create_start_population(netlist)
     for iteration in range(N_ITERATIONS):
         pairs = random_pairs(startpopulation)

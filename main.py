@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     if config.Hillclimber:
         solutions = {}
-        for i in range(10):
+        for i in range(20):
             hillclimber = hc.HillClimber(config.Astar_netlist)
             random_solution = hillclimber.run(iterations = config.hc_iterations)
             solutions[i] = random_solution
