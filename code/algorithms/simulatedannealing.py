@@ -72,6 +72,13 @@ class SimulatedAnnealing(HillClimber):
         self.current_temperature = self.current_temperature * self.alpha
 
     def evaluate_result(self, current_cost: int, new_cost: int) -> bool:
+        """
+        Evaluates the result by comparing the current cost with cost of
+        neighbor solution.
+        If the result is better returns True else False.
+        Might also return true if the result is worse based on current
+        temperature.
+        """
         new_value = new_cost
         old_value = current_cost
         
@@ -95,6 +102,10 @@ class SimulatedAnnealing(HillClimber):
     @classmethod
     def get_tune_results(cls, netlist: object, temperatures: list, alphas: list,
                             iterations = 50) -> defaultdict:
+        """
+        Tries Linear, fastDecrease and geometric with each alpha in alphas list
+        on all temperates and returns the result.
+        """
         if not (temperatures or alphas):
             raise Exception("Temperature or Alpha sequence must not be empty.")
         
@@ -123,11 +134,13 @@ class SimulatedAnnealing(HillClimber):
     
     @staticmethod
     def get_best_tuned_result(tune_results: defaultdict) -> tuple:
+        """
+        Return best combination of temperature and cooling scheme.
+        """
         first_key = list(tune_results.keys())[0]
         second_key = list(tune_results[first_key].keys())[0]
         winner = tune_results[first_key][second_key]
 
-        # print("winner: ", winner)
         for k, v in tune_results.items():
             for vk, r in v.items():
                 if r[1] < winner[1]:
