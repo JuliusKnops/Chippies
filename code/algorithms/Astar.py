@@ -2,7 +2,7 @@ import heapq
 import config
 
 class Node_Astar:
-    def __init__(self, x, y, z, cost = 0, parent = None):
+    def __init__(self, x: int, y: int, z: int, cost = 0, parent = None) -> None:
         self.x = x
         self.y = y
         self.z = z
@@ -13,6 +13,8 @@ class Node_Astar:
     def __lt__(self, other):
         """
         Allows qheap to auto sort. Finding the most promising using heuristics.
+        The function is f(x) = h(x) + g(x) 
+        with h(x) the current cost en g(x) the estimation
         """
         global destination_node
         self_estimate = ( (self.x - destination_node.x)**2 + 
@@ -26,23 +28,26 @@ class Node_Astar:
 
         return (self.cost + self_estimate) < (other.cost + other_estimate)
 
-    # This functions checks if goal state is reached.
-    # NOTE: without this function, eq seems to fail even when the cost and parent attribute match...?
     def __eq__(self, other):
+        """
+        This functions checks if goal state is reached.
+        """
         if self.x == other.x and self.y == other.y and self.z == other.z:
             return True
         return False
 
 class PathFinder_Astar(object):
 
-    def __init__(self, Start_chip, End_chip, auto_pathfind = True, Node = Node_Astar):
+    def __init__(self, Start_chip: object, End_chip: object, 
+                auto_pathfind = True, 
+                Node = Node_Astar) -> None:
         self.Start_chip = Start_chip
         self.End_chip = End_chip
 
         if auto_pathfind:
             self.path, self.cost = self.astar(Node = Node)
 
-    def astar(self, Node = Node_Astar):
+    def astar(self, Node = Node_Astar) -> None:
         """
         If Astar node, calculates most promising node using heuristics.
         Else, uses dijkstra. Astar can be converted to dijkstra if the used
@@ -52,10 +57,6 @@ class PathFinder_Astar(object):
         grid_cols = config.Astar_netlist.dimension[1][1] + 1
         grid_layers = config.Astar_netlist.dimension[1][2]
 
-        # split grid layers in up and down
-        grid_layers_up = 7
-        grid_layers_down = 0
-
         # NOTE: __lt__ needs to know the goal node
         global destination_node
         start = self.Start_chip
@@ -63,7 +64,9 @@ class PathFinder_Astar(object):
 
         # Temporary remove destination_node from gates so we are only checking
         # for other gates that are not the start or end.
-        config.Astar_netlist.gate_locations.remove( (destination_node.x, destination_node.y, destination_node.z) )
+        config.Astar_netlist.gate_locations.remove((destination_node.x, 
+                                                    destination_node.y,
+                                                    destination_node.z))
 
         heap = []
 
@@ -104,10 +107,14 @@ class PathFinder_Astar(object):
                     config.Astar_netlist.used_nodes.add(node)
 
                 # Re-add gate
-                config.Astar_netlist.gate_locations.add( (destination_node.x, destination_node.y, destination_node.z) )
+                config.Astar_netlist.gate_locations.add((   destination_node.x,
+                                                            destination_node.y,
+                                                            destination_node.z))
 
                 # remove used node as gate
-                config.Astar_netlist.used_nodes.remove( (destination_node.x, destination_node.y, destination_node.z) )
+                config.Astar_netlist.used_nodes.remove((destination_node.x,
+                                                        destination_node.y,
+                                                        destination_node.z))
 
                 return path[::-1], cost
 
@@ -120,12 +127,13 @@ class PathFinder_Astar(object):
             # to heap with its parent Node.
             # NOTE: is another way for the next_move func. Total possibilities
             #       are 3! = 6.
-            for dx, dy, dz in [(1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)]:
+            for dx, dy, dz in [ (1, 0, 0), (-1, 0, 0), (0, 1, 0), 
+                                (0, -1, 0), (0, 0, 1), (0, 0, -1)]:
                 x, y, z = current.x + dx, current.y + dy, current.z + dz
                 if not (0 <= x <= grid_rows and 0 <= y <= grid_cols):
                     continue
                 
-                if not grid_layers_down <= z <= grid_layers_up:
+                if not 0 <= z <= grid_layers:
                     continue
                                 
                 # INVALID NODE IF GATE NODE
@@ -133,7 +141,8 @@ class PathFinder_Astar(object):
                     continue
                 
                 # skip if connection already occupied
-                nodes_connection = { (current.x, current.y, current.z), (x, y, z) }
+                nodes_connection = {(current.x, current.y, current.z), 
+                                    (x, y, z) }
                 if nodes_connection in config.Astar_netlist.used_connections:
                     continue
 
@@ -148,35 +157,9 @@ class PathFinder_Astar(object):
                 heapq.heappush(heap, (cost, Node(x, y, z, cost, current)))
 
         # Re-add gate before raising exception
-        config.Astar_netlist.gate_locations.add( (destination_node.x, destination_node.y, destination_node.z) )
+        config.Astar_netlist.gate_locations.add((   destination_node.x,
+                                                    destination_node.y,
+                                                    destination_node.z) )
 
         # Return no path found
         return (None, None)
-
-
-# if __name__ == '__main__':
-#     grid_rows = 3
-#     grid_cols = 3
-#     grid_layers = 1
-#     # 2x2 grid with only 1 layer
-#     grid = [
-#             [ # start of layer
-#             [[0, 0, 0], [0, 1, 0]], # X-axis row 1 
-#             [[1, 0, 0], [1, 1, 0]]  # X-axis row 2
-#                  ] # end of layer
-#                 ]
-#     start = Node(0, 0, 0)
-#     end = Node(2, 2, 0)
-
-#     # astar_example = PathFinder(start, end)
-#     # print(astar_example.path)
-
-#     chip_nr = 0 # loopt van 0 tot en met 2
-#     netlist_nr = 1 # loopt van 1 tot en met 3
-
-#     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-#     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-
-#     Astar_netlist = Netlist(netlist_file, print_file)
-
-#     print(find_all_paths([ (start, end) ]))
