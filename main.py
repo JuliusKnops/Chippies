@@ -33,12 +33,6 @@ import csv
 import json
 
 if __name__ == "__main__":
-    # chip_nr = config.chip_nr # loopt van 0 tot en met 2
-    # netlist_nr = config.netlist_nr # loopt van 1 tot en met 3
-    
-    # netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-    # print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-    # netlists = netlist.Netlist(netlist_file, print_file)
 
     if config.RandomAlgorithm:
         if config.experiment:

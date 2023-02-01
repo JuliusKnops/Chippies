@@ -46,7 +46,8 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
             # create end_gate variable and get coordinates of object
             end_gate = connection.get_coordinates() 
             
-            # create list for path between start gate and end gate, starting with start_gate
+            # create list for path between start gate and end gate, 
+            # starting with start_gate
             path = [start_gate]
         
             # start location of wire starts at the start_gate location
@@ -58,7 +59,8 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
             # start with all possible moves
             possible_moves = [(1,0,0), (0,1,0), (0,0,1), (-1,0,0), (0,-1,0), (0,0,-1)]
 
-            # variable for reset the whole netlist, incase of complete stuckness or too many moves from point A to point B
+            # variable for reset the whole netlist, 
+            # incase of complete stuckness or too many moves from point A to point B
             hard_stuck = 0
             n_moves = 0
 
@@ -69,7 +71,8 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
                 if check_hard_stuck(hard_stuck, n_moves):
                     return
 
-                # reset the possible move list, happens when starting from a new point or when current path gets resetted
+                # reset the possible move list, 
+                # happens when starting from a new point or when current path gets resetted
                 possible_moves = reset_possible_moves(reset, possible_moves)
 
                 # pick random move from possible moves
@@ -79,11 +82,13 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
                 current_wire_location = new_wire_location
                 new_wire_location = calculate_wire_pos(current_wire_location, random_move) 
 
-                # used_unit is the edge between Node 1 and Node 2, noted as ((N1X, N1Y, N1Z), (N2X, N2Y, N2Z))
+                # used_unit is the edge between Node 1 and Node 2, 
+                # noted as ((N1X, N1Y, N1Z), (N2X, N2Y, N2Z))
                 used_unit = check_edge_connection(current_wire_location, new_wire_location)
 
                 # check if new position is a valid position 
-                # (check if node has not been visited before, node is not another gate and node is not out of bounds)
+                # (check if node has not been visited before, 
+                # node is not another gate and node is not out of bounds)
                 if not valid_node(used_unit, visited, invalid_nodes, netlist, start_gate, end_gate):
                     
                     # remove made move from list of possible moves
@@ -96,7 +101,8 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
                     # previous made moves cannot occur
                     reset = False
 
-                    # if all possible moves are removed from a possition, reset the current path and start over from start_gate
+                    # if all possible moves are removed from a possition, 
+                    # reset the current path and start over from start_gate
                     # then increase hard stuck by one
                     path, new_wire_location, reset, hard_stuck = path_reset(path, new_wire_location, hard_stuck, possible_moves, start_gate)
                 
@@ -108,7 +114,8 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
                     # update path list with the new connection
                     path, reset = add_to_path(new_wire_location, path)
 
-                    # if new current location is 1 valid move removed from end point, make that move
+                    # if new current location is 1 valid move 
+                    # removed from end point, make that move
                     path, found_path = check_goal(new_wire_location, path, end_gate, visited)
 
             # update current visited with found path
@@ -123,7 +130,8 @@ def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
     
 def reset_possible_moves(reset: bool, possible_moves: list) -> list:
     """
-    When a valid move has been made, the list with possible moves gets resetted to
+    When a valid move has been made, 
+    the list with possible moves gets resetted to 
     standard form, with all possible moves 
     """
     if reset:
@@ -134,8 +142,8 @@ def path_reset(path: list, new_wire_location: tuple,
                hard_stuck: int, possible_moves: list, 
                start_gate: tuple) -> Tuple[list, tuple, bool, int]:
     """
-    When the number of possible moves from any point equals 0, the current path gets resetted
-    hardstuck gets increased by 1
+    When the number of possible moves from any point equals 0, 
+    the current path gets resetted hardstuck gets increased by 1
     """
     if len(possible_moves) == 0:
         reset = True
@@ -147,7 +155,8 @@ def path_reset(path: list, new_wire_location: tuple,
 
 def calculate_wire_pos(current_wire_location: tuple, random_move: tuple) -> tuple:
     """
-    Returns Tuple of new position of the wire by adding dx, dy, dz to current position
+    Returns Tuple of new position of the wire by 
+    adding dx, dy, dz to current position
     """
     return (current_wire_location[0] + random_move[0], 
             current_wire_location[1] + random_move[1], 
@@ -160,7 +169,8 @@ def add_to_path(new_wire_location: tuple, path: list) -> Tuple[list, bool]:
     path.append(new_wire_location) 
     reset = True
 
-    # Incase a path makes a crossing in its own path, the points visited between the crossing get removed. 
+    # Incase a path makes a crossing in its own path, 
+    # the points visited between the crossing get removed. 
     # Remove loop in own path
     seen = set()
     dupes = [d for d in path if d in seen or seen.add(d)]
@@ -242,8 +252,8 @@ def update_solution(solution: list, path: list) -> list:
 
 def check_hard_stuck(hard_stuck: int, n_moves: int) -> bool:
     """
-    if current attempt of creating a path leads to N hard stucks or takes M total moves
-    the current attempt is marked as hard stuck.
+    if current attempt of creating a path leads to N hard stucks 
+    or takes M total moves the current attempt is marked as hard stuck.
     """
     if hard_stuck == config.hardstuck or n_moves == config.loopstuck:
         return True
@@ -253,21 +263,23 @@ def check_edge_connection(current: tuple, new: tuple) -> tuple:
     """
     https://www.geeksforgeeks.org/python-sort-list-of-tuple-based-on-sum/
     edge connections are as follow: ((x1, y1, z1), (x2, y2, z2))
-    the order of Tuples in Tuple is determined by the sum of each x, y, z values
+    the order of Tuples in Tuple is determined by the sum of each x, y, z value
     Tuple with the lowest sum is placed on index 0
     """
     lst = [current, new]
 
     for i in range(len(lst)):
         for j in range(len(lst) - i - 1):
-            if (lst[j][0]+lst[j][1]+lst[j][2]) > (lst[j+1][0]+lst[j+1][1]+lst[j+1][2]):
+            if (lst[j][0]+lst[j][1]+lst[j][2]) > \
+               (lst[j+1][0]+lst[j+1][1]+lst[j+1][2]):
                 lst[j], lst[j+1], lst[1] = lst[1], lst[j+1], lst[j]
     return tuple(lst)
 
 def get_randomize_solution(netlist: NetlistObject) -> tuple:
     """
-    call this function to create a random solution. In case of hardstuck None gets returned initially.
-    this function makes in case of hardstuck to be sure to reset / recall function and try again  
+    call this function to create a random solution. 
+    In case of hardstuck None gets returned initially.
+    this function makes in case of hardstuck to be sure to recall function  
     """
 
     found_solution = Start_Random_Algorithm(netlist)
