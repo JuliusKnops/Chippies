@@ -71,20 +71,3 @@ iterations: int = 2
 
 
 
-
-# Astar_full_implementation = False
-# Astar_sample = 0
-# Hillclimber = False
-# hc_iterations = 250
-# SimulatedAnnealing_tune = False
-# SA_tune_iterations = 30
-# SimulatedAnnealing = True
-# sa_iterations = 250
-# RandomAlgorithm = False
-
-# Visualize = True
-# experiment = True
-# experiment_duration = 3600
-# iterations = 10
-
-
