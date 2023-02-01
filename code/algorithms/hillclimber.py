@@ -15,7 +15,7 @@ class HillClimber(object):
     connection order with the new better one.
     """
 
-    def __init__(self, netlist):
+    def __init__(self, netlist: object) -> None:
         # Initialize the board
         self.netlist = netlist
         # First connection order and length
@@ -26,7 +26,7 @@ class HillClimber(object):
         # add first solution order
         self.used_permutation.add(tuple(self.current_connection_order))
     
-    def mutate_child(self):
+    def mutate_child(self) -> None:
         """
         Returns mutated children by finding all nearest neighbour solutions.
         Then suffles them to reduce bias.
@@ -42,43 +42,19 @@ class HillClimber(object):
                 nearest_neighbours.append(neighbour)
         random.shuffle(nearest_neighbours)
         return nearest_neighbours
-        
-    def mutate_child_by_random_swap(self):
+
+    def evaluate_result(self, current_cost: int, new_cost: int) -> bool:
         """
-        Mutates given child by randomly swapping 2 connection orders.
-        Returns a unique mutated child without alterning object attributes.
+        Returns true if the new cost is cheaper than current_cost.
         """
+        return new_cost < current_cost
         
-        # create unused child
-        for i in range(5000):
-            # pick first swap index
-            i = random.randint(0, self.len_connection_order - 1)
-
-            # pick different second swap index
-            j = i
-            while j == i:
-                j = random.randint(0, self.len_connection_order - 1)
-
-            # swap em
-            child = copy.copy(self.current_connection_order)
-            child[i] = self.current_connection_order[j]
-            child[j] = self.current_connection_order[i]
-           
-            # if unused child, break
-            if tuple(child) not in self.used_permutation:
-                self.used_permutation.add(tuple(child))
-                break
-                
-        else:
-            raise Exception("Failed to find a child!")
-
-        return child
-        
-    def run(self, iterations):
+    def run(self, iterations: int) -> tuple:
         """
         Runs the algororithms i times, with i being the given number of
         iterations.
-        Goes through all neighbours, if a better one is found continues the iteration.
+        Goes through all neighbours, if a better one is found continues the 
+        iteration.
         Ignores invalid children as it is not a solution.
         Returns the best found path and its cost.
         """
@@ -88,7 +64,7 @@ class HillClimber(object):
         # find first random solution
         current_path, current_cost = PA_util.get_solution(self.netlist)
             
-        print(current_cost)
+        # print(current_cost)
         
         i = 0
         
@@ -116,11 +92,14 @@ class HillClimber(object):
                     
                     i += 1
                     pbar.update(1)
+
+                    accept_new_child = self.evaluate_result( current_cost, 
+                                                                new_cost )
                     
-                    if new_cost < current_cost:
+                    if accept_new_child:
                         self.current_connection_order = new_child
                         current_path, current_cost = new_path, new_cost
-                        print(new_cost)
+                        # print(new_cost)
                         break
                     
 
