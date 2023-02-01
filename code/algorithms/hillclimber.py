@@ -62,7 +62,7 @@ class HillClimber(object):
         self.netlist.reset()
         
         # find first random solution
-        current_path, current_cost = PA_util.get_solution(self.netlist)
+        current_path, current_cost = PA_util.get_random_solution(self.netlist)
         
         i = 0
         
