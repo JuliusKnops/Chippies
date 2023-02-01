@@ -9,13 +9,17 @@ from .hillclimber import HillClimber
 
 class SimulatedAnnealing(HillClimber):
     """
-    The SimulatedAnnealing class that tries all valid neighbour solutions for the current order.
-    If a solution is accepted then the remaining neighbour solutions will not be checked.
-    Also sometimes accepts solutions that are worse, depending on the current temperature.
-    Most of the functions are similar to those of the HillClimber class, which is why
-    we use that as a parent class.
+    The SimulatedAnnealing class that tries all valid neighbour solutions for 
+    the current order.
+    If a solution is accepted then the remaining neighbour solutions will 
+    not be checked.
+    Also sometimes accepts solutions that are worse, depending on the current 
+    temperature.
+    Most of the functions are similar to those of the HillClimber class, which 
+    is why we use that as a parent class.
     """
-    def __init__(self, netlist, temperature, update_temperature, alpha = None, beta = 1):    
+    def __init__(self, netlist: object, temperature: int,
+                    update_temperature: str, alpha = None, beta = 1) -> None:  
         
         # supercharge this class with Hillclimber class
         super().__init__(netlist)
@@ -42,9 +46,9 @@ class SimulatedAnnealing(HillClimber):
         elif update_temperature == "fastDecrease":
             self.update_temperature = self.update_temperature_fastDecrease
         else:
-            raise exception("Failed to prepare the oven: invalid update temperature type.")
+            raise Exception("Invalid update_temperature arg")
 
-    def update_temperature_linear(self):
+    def update_temperature_linear(self) -> None:
         """
         This function implements a *linear* cooling scheme.
         Temperature will become zero after all iterations passed to the run()
@@ -52,118 +56,65 @@ class SimulatedAnnealing(HillClimber):
         """
         self.current_temperature -= (self.start_temperature / self.iterations)
         
-    def update_temperature_fastDecrease(self):
+    def update_temperature_fastDecrease(self) -> None:
         """
         This function implements a *FastDecrease* cooling scheme.
         Temperature will lower based on dividing by the current iteration.
         Adding +1 to avoid divide by 0.
         """
-        self.current_temperature = self.current_temperature / (self.current_iterations + 1)  
+        self.current_temperature /= (self.current_iterations + 1)  
         
-    def update_temperature_geometric(self):
+    def update_temperature_geometric(self) -> None:
         """
         This function implements a *Exponential* cooling scheme.
         Temperature will lower based on the passed alpha value between 0 and 1.
         """
         self.current_temperature = self.current_temperature * self.alpha
-  
-    def run(self, iterations):
-        """
-        Same as Hillclimber but a bit different.
-        Also sometimes accepts solutions that are worse, depending on the current
-        temperature.
-        """
-        # set iterations
-        self.iterations = iterations
+
+    def evaluate_result(self, current_cost: int, new_cost: int) -> None:
+        new_value = new_cost
+        old_value = current_cost
         
-        # reset netlist before running
-        self.netlist.reset()
+        # Calculate the probability of accepting this new connection order
+        delta = self.beta * (new_value - old_value)
         
-        # find first solution
-        current_path, current_cost = PA_util.get_solution(self.netlist) # added v2 
+        # prevents overflow if delta is negative and big
+        if -delta > 0:
+            probability = 1.0
+        else:
+            probability = math.exp(-delta / self.current_temperature)
         
-#         print(current_cost)
-        
-        # reset netlist
-        self.netlist.reset()
-        
-        i = 0
+        # increase current iterations by 1
+        self.current_iterations += 1
 
-        with tqdm(total=iterations) as pbar:
-            while i < iterations:
-                # reset netlist
-                self.netlist.reset()
-                
-                # get nearest connection order neighbours
-                new_children = self.mutate_child()
+        # Update the temperature
+        self.update_temperature()
 
-                for new_child in new_children:
-
-                    # TODO: more elegant
-                    if i >= iterations:
-                        break
-
-                    # reset netlist
-                    self.netlist.reset()
-
-                    new_path, new_cost = PA_util.find_all_paths(new_child,
-                                                                self.netlist)
-                    if not new_path:
-                        continue
-                       
-                    i += 1
-                    pbar.update(1)
-
-                    new_value = new_cost
-                    old_value = current_cost
-                    
-                    # Calculate the probability of accepting this new connection order
-                    delta = self.beta * (new_value - old_value)
-                    
-                    # prevents overflow if delta is negative and big
-                    if -delta > 0:
-                        probability = 1.0
-                    else:
-                        probability = math.exp(-delta / self.current_temperature)
-                    
-                    # increase current iterations by 1
-                    self.current_iterations += 1
-
-                    # Update the temperature
-                    self.update_temperature()
-                    
-                    # Pull a random number between 0 and 1 and see if we accept the new connection order
-                    if random.random() < probability:
-                        self.current_connection_order = new_child
-                        current_path, current_cost = new_path, new_cost
-#                         print("Accepted: ", new_cost)
-#                         print("Temperature: ", self.current_temperature)
-                        break
-
-        return current_path, current_cost
-    
+        return random.random() < probability  
     
     @classmethod
-    def get_tune_results(cls, netlist, temperatures, alphas, iterations = 50):
+    def get_tune_results(cls, netlist: object, temperatures: list, alphas: list,
+                            iterations = 50) -> None:
         if not (temperatures or alphas):
             raise Exception("Temperature or Alpha sequence must not be empty.")
         
         all_results = defaultdict(dict)
         
+        # gather results for linear
         all_results["linear_results"] = {}
         for temperature in temperatures:
-#             for alpha in alphas:
             linear_sa = cls(netlist, temperature, "linear")
             path, cost = linear_sa.run(iterations)
             all_results["linear_results"][temperature] = (path, cost)
         
+        # gather results for fastDecrease
         all_results["fastDecrease_results"] = {}
         for temperature in temperatures:
-#             for alpha in alphas:
             linear_sa = cls(netlist, temperature, "fastDecrease")
             path, cost = linear_sa.run(iterations)
             all_results["fastDecrease_results"][temperature] = (path, cost)
-       
+
+        # gather results for temperatures and alphas (unique) combinations
         for t, a in itertools.product(temperatures, alphas):
             sa = cls(netlist, temperature, "geometric", alpha = a)
             all_results[t][a] = sa.run(iterations)
@@ -171,7 +122,7 @@ class SimulatedAnnealing(HillClimber):
         return all_results
     
     @staticmethod
-    def get_best_tuned_result(tune_results):
+    def get_best_tuned_result(tune_results: defaultdict) -> tuple:
         first_key = list(tune_results.keys())[0]
         second_key = list(tune_results[first_key].keys())[0]
         winner = tune_results[first_key][second_key]
