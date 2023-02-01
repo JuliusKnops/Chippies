@@ -3,6 +3,7 @@ Chips zijn overal te vinden zoals in je lapotop of telefoon die veel verschillen
 \
 In deze case is het de bedoeling om van de gegeven gates en netlist een optimale oplossing te vinden. Dit lijkt misschien makkelijk echter is het een zeer complex probleem. Met behulp van algoritmes en heuristieken proberen we de beste oplossingen te vinden voor de chips. 
 
+![This is an image](/mnt/c/Users/Eigenaar/Documents/heuristiek_algoritme/Chippies/Chippies/docs/Example_visualisation.png)
 ## Vereisten
 
 De gebruikte versie van Python voor deze codebase is Python 3.7. In het bestand requirements.txt staan benodigde libraries, met bijbehorende versies, die geïnstalleerd moeten worden. Dit is nodig om de code zonder problemen te laten draaien. Het installeren van de libraries kunnen via de volgende pip commando uitgevoerd worden.
@@ -16,7 +17,7 @@ Je kan kiezen tussen onopgeloste voorbeelden van chips (0 tot 2) met verschillen
 Je kan de main functie aanroepen met:
 
 ```bash
-python3 main.py
+python main.py
 ```
 Voor gebruik van main.py kan je kiezen uit verschillende algoritmes. Dit verander je in config.py
 
@@ -50,7 +51,7 @@ Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en 
 - **/data**: bevat alle databestanden van elke chip die nodig zijn om oplossing te genereren en te visualiseren
 
 ## Algoritmes
--   **Dijkstra algoritme**: algoritme dat het kortste pad vind door 
+-   **Dijkstra algoritme**: 
 -   **Astar**: algoritme vergelijkbaar met 
 -   **Genetic**: algoritme dat nieuwe generaties van oplossingen genereerd doormiddel van kruisingen en mutaties. 
 -   **Hillclimber**: 
