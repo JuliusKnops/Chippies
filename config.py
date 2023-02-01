@@ -15,11 +15,11 @@ iterations is number of iterations used in experiment
 Astar_full_implementation = False
 Astar_sample = 0
 Hillclimber = False
-hc_iterations = 100
+hc_iterations = 250
 SimulatedAnnealing_tune = False
 SA_tune_iterations = 30
-SimulatedAnnealing = False
-sa_iterations = 100
+SimulatedAnnealing = True
+sa_iterations = 250
 Random = False
 
 Visualize = True
