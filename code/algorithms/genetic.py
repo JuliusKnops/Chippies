@@ -1,5 +1,5 @@
 """
-Genetic.py
+GeneticAlgorithm.py
 
 Chippies
 Julius Knops, Deniz Mermer, Hidde Brenninkmeijer
@@ -21,16 +21,18 @@ from queue import PriorityQueue
 
 import sys
 
+import config
+
 """
 Startpopulation size -> variable
 chance to mutate -> variable
 
 """
 
-MAX_INT = 99999999 #sys.maxint
-P_MUTATE = 0.1
-POPULATION_SIZE = 10
-N_ITERATIONS = 3
+MAX_INT = math.inf
+P_MUTATE = config.MutateChance
+POPULATION_SIZE = config.PopulationSize
+N_ITERATIONS = config.NumberOfGenerations
 MAX_X = 8
 MAX_Y = 8
 MAX_Z = 7
@@ -41,7 +43,7 @@ def create_start_population(netlist):
     Create a starting population of size N by getting a random solution
     """
     start_population = []
-    for Nsolution in range(POPULATION_SIZE):
+    for Nsolution in range(config.PopulationSize):
         start_population.append(get_randomize_solution(netlist))
     return start_population
 
@@ -118,7 +120,7 @@ def mutate(child):
     for path in child:
         if path is None:
             continue
-        if P_MUTATE >= random.uniform(0, 1):
+        if config.MutateChance >= random.uniform(0, 1):
             start = path[0]
             end = path[-1]
             new_path.add((child.index(path), start, end))
@@ -330,7 +332,7 @@ def calculate_euclidean(pos1, pos2):
 
 def start_genetic(netlist):
     startpopulation = create_start_population(netlist)
-    for iteration in range(N_ITERATIONS):
+    for iteration in range(config.NumberOfGenerations):
         pairs = random_pairs(startpopulation)
 
         startpopulation = genetic(pairs, startpopulation)
@@ -343,7 +345,7 @@ def start_genetic(netlist):
         
 
         population_scores = sorted(population_scores, key=lambda x: x[0])
-        population_scores = population_scores[:POPULATION_SIZE]
+        population_scores = population_scores[:config.PopulationSize]
         
         population = []
         for x in startpopulation:

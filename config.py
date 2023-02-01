@@ -45,11 +45,19 @@ sa_iterations: int = 100
 # Random algorithm paramater
 RandomAlgorithm: bool = False
 
+# Genetic Algorithm (W.I.P.)
+GeneticAlgorithm: bool = False 
+MutateChance = 0.1
+PopulationSize = 10
+NumberOfGenerations = 3
+
 # General settings
 Visualize: bool = True 
 experiment: bool = True
 experiment_duration: int = 3600
 iterations: int = 2
+
+
 
 
 # Astar_full_implementation = False
