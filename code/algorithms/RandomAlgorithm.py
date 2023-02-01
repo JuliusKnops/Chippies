@@ -6,21 +6,21 @@ Julius Knops, Deniz Mermer, Hidde Brenninkmeijer
 Algoritmen & Heuristieken
 
 A random algorithm that connects gates with a given netlist
-Moves are made randomly, however moves cannot overlap with eachother
+Moves are made randomly, however moves cannot overlap with each other
 Crossings are allowed
 """
 
 from code.classes.netlist import *
 from code.classes.gates import *
 import random
+import config
 
 from typing import Tuple, TypeVar
 
-import time
 
 NetlistObject = TypeVar("NetlistObject")
 
-def random_algo(netlist: NetlistObject) -> tuple:
+def Start_Random_Algorithm(netlist: NetlistObject) -> tuple:
     """
     Returns a random solution for given gates and netlist
     """
@@ -231,6 +231,9 @@ def update_visited(visited: set, path: list) -> set:
     return visited
 
 def update_solution(solution: list, path: list) -> list:
+    """
+    When a new path has been made, add new path to current solution list
+    """
     tmp_solution = []
     for nodes in path:
         tmp_solution.append(nodes)
@@ -242,7 +245,7 @@ def check_hard_stuck(hard_stuck: int, n_moves: int) -> bool:
     if current attempt of creating a path leads to N hard stucks or takes M total moves
     the current attempt is marked as hard stuck.
     """
-    if hard_stuck == 100 or n_moves == 10000:
+    if hard_stuck == config.hardstuck or n_moves == config.loopstuck:
         return True
     return False
 
@@ -267,9 +270,9 @@ def get_randomize_solution(netlist: NetlistObject) -> tuple:
     this function makes in case of hardstuck to be sure to reset / recall function and try again  
     """
 
-    found_solution = random_algo(netlist)
+    found_solution = Start_Random_Algorithm(netlist)
     while not found_solution:
-        found_solution = random_algo(netlist)
+        found_solution = Start_Random_Algorithm(netlist)
 
     return found_solution
 

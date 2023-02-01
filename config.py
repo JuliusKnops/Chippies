@@ -44,6 +44,8 @@ sa_iterations: int = 100
 
 # Random algorithm paramater
 RandomAlgorithm: bool = False
+hardstuck = 100
+loopstuck = 10000
 
 # Genetic Algorithm (W.I.P.)
 GeneticAlgorithm: bool = False 
