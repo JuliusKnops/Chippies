@@ -10,8 +10,8 @@ Moves are made randomly, however moves cannot overlap with each other
 Crossings are allowed
 """
 
-from code.classes.netlist import *
-from code.classes.gates import *
+from code.classes.netlist import Netlist
+from code.classes.gates import Gates
 import random
 import config
 
