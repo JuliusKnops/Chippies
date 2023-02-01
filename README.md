@@ -53,6 +53,21 @@ hc_iterations: int = 250
 
 ### More options in config.py available ###
 ```
+## Random netlist en oplossingen
+Je kunt in config.py kiezen om een willekeurige netlist te genereren.
+
+Let op!: De naam van de file waar het resultaat in wordt opgeslagen is gelijk
+aan de gebruikte chip nummer en netlist. Als je bijvoorbeeld chip nummer 0 en 
+netlist 1 gebruikt, deze variable in config.py niet wijzigt en daarna main.py
+draait met random_netlist True dan wordt de file waar de resultaten van chip
+nummer 0 en netlist 1 in zijn overschreven.
+
+Willekeurige netlisten waarbij de connecties dicht bij elkaar zijn, lijken
+makkelijker oplosbaar. Waneer ze ver van elkaar zijn en er gates met connections
+tussen zitten krijg je meer crossings en dus een slechter resultaat.
+Willekeurige netlisten waar connection of gates er uiteindelijk voor zorgt dat 
+een gate "ingeboxt" is zijn onoplosbaar.     
+
 ## Structuur
 
 Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en hoe je je kan navigeren:
@@ -63,12 +78,12 @@ Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en 
 - **/data**: bevat alle databestanden van elke chip die nodig zijn om oplossing te genereren en te visualiseren
 
 ## Algoritmes
--   **Dijkstra algoritme**: 
--   **Astar**: algoritme vergelijkbaar met 
+-   **Dijkstra algoritme**: Gebruikt de huidige kosten om het kortste en meest belovend pad te vinden. In deze case eigenlijk een breadth-first search omdat elke afstand tussen 2 punten van de grid een eenheid van 1 heeft.
+-   **Astar**: Hetzelfde als dijkstra, maar de euclidean afstand van het huidige punt naar de eindbestemming wordt als heuristic gebruikt.
 -   **Genetic**: algoritme dat nieuwe generaties van oplossingen genereerd doormiddel van kruisingen en mutaties. 
--   **Hillclimber**: 
+-   **Hillclimber**: Zoekt de beste oplossing door te kijken of een buur oplossing beter is. Zo ja, dan is dat de nieuwe oplossing en wordt dit een x keer herhaald.
 -   **Random**: algoritme dat random pad kiest voor oplossing
--   **Simulated Annealing**: 
+-   **Simulated Annealing**: Identiek aan hillclimber, maar wordt de oplossing gekozen gebaseerd op een acceptatiekans.
 
 ## Auteurs
 
