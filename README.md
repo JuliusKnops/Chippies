@@ -16,7 +16,7 @@ Je kan kiezen tussen onopgeloste voorbeelden van chips (0 tot 2) met verschillen
 Je kan de main functie aanroepen met:
 
 ```bash
-python main.py
+python3 main.py
 ```
 Voor gebruik van main.py kan je kiezen uit verschillende algoritmes. Dit verander je in config.py
 
