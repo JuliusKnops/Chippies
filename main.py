@@ -12,7 +12,7 @@ input in config.py
 from code.algorithms import Astar
 from code.algorithms import hillclimber as hc
 from code.algorithms import simulatedannealing as sa
-from code.algorithms import random_algo
+from code.algorithms import RandomAlgorithm
 
 from code.algorithms.PathFinder_Astar_Util import ( PathFinder_Aster_util as 
                                                     PA_util )
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         if config.experiment:
             for i in range(config.iterations):
                 
-                solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(config.Astar_netlist)
+                solution_cost, solution_connections, solution_gates = RandomAlgorithm.get_randomize_solution(config.Astar_netlist)
                 
                 with open(f'chip_{config.chip_nr}_{config.netlist_nr}.csv', 'a', encoding='UTF8') as f:
                     writer = csv.writer(f)
@@ -48,10 +48,10 @@ if __name__ == "__main__":
 
             visualisation.create_histogram(config.chip_nr, config.netlist_nr)
 
-        solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(config.Astar_netlist)
+        solution_cost, solution_connections, solution_gates = RandomAlgorithm.get_randomize_solution(config.Astar_netlist)
 
         if config.Visualize:
-            visualisation.visualisation(solution_connections, solution_gates, config.chip_nr)
+            visualisation.visualisation(solution_connections, config.chip_nr)
     
     if config.Astar_full_implementation:
         best_solution = PA_util.find_cheapest_path(
