@@ -1,11 +1,11 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d 
 
 import csv
+from typing import TypeVar
 
-def visualisation(solution: list, gates: list, chip_nr: int):
-# def visualisation(solution, chip_nr):
+ImageFile = TypeVar("ImageFile")
+
+def visualisation(solution: list, chip_nr: int) -> ImageFile:
     """function for visualising chips
 
     Args:
@@ -25,42 +25,33 @@ def visualisation(solution: list, gates: list, chip_nr: int):
     # add labels 
     ax.set_xlabel("X-axis"); ax.set_ylabel("Y-axis"); ax.set_zlabel("Z-axis")
 
-    # # place gates 
-    # x_gates = []
-    # y_gates = []
-    # for i in gates:
-    #     x_gates.append(i[0])
-    #     y_gates.append(i[1])
-    # ax.scatter(x_gates, y_gates, c='red', s=25)
-
     # append coördinates in right list for the pathways
     x_gates = []
     y_gates = []
-    for i in solution:
+    for path in solution:
         x_unit = []
         y_unit = []
         z_unit = []
-        startgate = i[0]
-        endgate = i[-1]
+        startgate = path[0]
+        endgate = path[-1]
         x_gates.append(startgate[0])
         y_gates.append(startgate[1])
         x_gates.append(endgate[0])
         y_gates.append(endgate[1])
-        for j in i:
-            x_unit.append(j[0])
-            y_unit.append(j[1])
-            z_unit.append(j[2])
+        for node in path:
+            x_unit.append(node[0])
+            y_unit.append(node[1])
+            z_unit.append(node[2])
         ax.plot(x_unit, y_unit, z_unit)
     ax.scatter(x_gates, y_gates, c='red', s=25)
 
-    # plot figure
     plt.savefig(f"{chip_nr}_solution.png")
     plt.show()
 
 
-def create_histogram(chip_nr: int, netlist_nr: int):
+def create_histogram(chip_nr: int, netlist_nr: int) -> ImageFile:
     """
-    Create histogram of csv file with one or more costs
+    Create histogram of csv file with one or more costs of different runs
     """
     cost_list = []
     with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'r', encoding='UTF8') as f:

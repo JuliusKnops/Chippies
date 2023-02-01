@@ -1,10 +1,20 @@
 import csv 
-from .gates import *
+import config
+import random
+import more_itertools as mit
+
+from .gates import Gates
 
 class Netlist():
     def __init__(self, netlist_sourcefile, print_sourcefile):
-        self.gates = self.load_gates(print_sourcefile)
-        self.load_connections(netlist_sourcefile)
+
+        if config.random_netlist:
+            self.gates = self.get_random_gates()
+            self.get_random_connections()
+        else:
+            self.gates = self.load_gates(print_sourcefile)
+            self.load_connections(netlist_sourcefile)
+
         self.invalid_gates_list = self.invalid_gates()
         self.dimension = self.get_dimensions()
 
@@ -52,12 +62,55 @@ class Netlist():
     # reads the netlist.csv file and add to each gate the given connections
     def load_connections(self, sourcefile):
         with open(sourcefile) as in_file:
-            reader = csv.DictReader(in_file) 
+            reader = csv.DictReader(in_file)
             for row in reader:
                 connections = list(row.values())
                 gate_a = connections[0]
                 gate_b = connections[1]
                 self.gates[gate_a].add_connections(self.gates[gate_b])
+
+    def get_random_gates(self):
+        """
+        Generates random gates. Number of gates based on config settings.
+        """
+        gates = set()
+
+        # randomly generate gates until max reached
+        while len(gates) < config.gates_max:
+            x = random.randint(0, config.x_max)
+            y = random.randint(0, config.y_max)
+
+            gate_nr = len(gates)
+            gate = Gates( gate_nr, x, y, 0 )
+
+            gates.add( gate )
+
+        # return dic for consistency
+        return { gate.name:gate for gate in gates }
+
+    def get_random_connections(self):
+        """
+        Creates random connections based on existing gates.
+        The number of connections is based on config settings.
+        """
+        connections = set()
+
+        # create list of gates
+        gate_objects = [self.gates[gate_nr] for gate_nr in self.gates]
+        
+        # randomly assign connections until max reached
+        while len(connections) < config.connections_max:
+            # get a random connection out of all possible connections
+            connection = mit.random_permutation(gate_objects, 2)
+
+            # make frozenset in order to add to a set and avoid dupes
+            connection = frozenset(connection)
+            connections.add(connection)
+
+        # add gates connections to gate objects
+        for connection in connections:
+            gate1, gate2 = connection
+            self.gates[gate1.name].add_connections(gate2)
     
     # returns a set with invalid nodes.
     # if a gate is located on a node with a z > 0, than every node
