@@ -49,7 +49,7 @@ def visualisation(solution: list, gates: list, chip_nr: int):
 
 def create_histogram(chip_nr: int, netlist_nr: int):
     """
-    Create histogram
+    Create histogram of csv file with one or more costs
     """
     cost_list = []
     with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'r', encoding='UTF8') as f:

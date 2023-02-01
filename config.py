@@ -9,9 +9,12 @@ A configuration file to change parameter values and choose which
 algorithm or heuristic is used to solve the netlist problem
 """
 
+###
+# Chip and netlist number to solve for
+###
 from code.classes import netlist
-chip_nr: int = 2 
-netlist_nr: int = 9
+chip_nr: int = 0 
+netlist_nr: int = 1
 netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr}.csv"
 print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
 Astar_netlist = netlist.Netlist(netlist_file, print_file)
@@ -24,45 +27,44 @@ Visualize is 3D plot .png-file of solution
 experiment calls multiple solutions to calculate average, std dev
 iterations is number of iterations used in experiment
 """
-# Astar_full_implementation: bool = False # True or False
-# Astar_sample: int = 0 # int between 0 - 1000000
+
+# A* parameters
+Astar_full_implementation: bool = False 
+Astar_sample: int = 0 
+
+# Hillclimber parameters
+Hillclimber: bool = False
+hc_iterations: int = 250 
+
+# Simulated Annealing parameters
+SimulatedAnnealing_tune: bool = False 
+SA_tune_iterations: int = 30 
+SimulatedAnnealing: bool = False 
+sa_iterations: int = 100 
+
+# Random algorithm paramater
+RandomAlgorithm: bool = True 
+
+# General settings
+Visualize: bool = True 
+experiment: bool = True
+experiment_duration: int = 3600
+iterations: int = 2
 
 
-# Hillclimber: bool = True # True or False
-# hc_iterations: int = 250 # int between 0 - 1000000
+# Astar_full_implementation = False
+# Astar_sample = 0
+# Hillclimber = False
+# hc_iterations = 250
+# SimulatedAnnealing_tune = False
+# SA_tune_iterations = 30
+# SimulatedAnnealing = True
+# sa_iterations = 250
+# RandomAlgorithm = False
 
+# Visualize = True
+# experiment = True
+# experiment_duration = 3600
+# iterations = 10
 
-# SimulatedAnnealing_tune: bool = False # True or False
-# SA_tune_iterations: int = 30 # int between 0 - 1000000
-# SimulatedAnnealing: bool = False # True or False
-
-# sa_iterations: int = 100 # int between 0 - 1000000
-# Random: bool = False # True or False
-
-
-# Visualize: bool = True # True or False
-# experiment: bool = True
-# experiment_duration: int = 3600
-# iterations: int = 10
-# ###
-
-Astar_full_implementation = False
-Astar_sample = 0
-Hillclimber = False
-hc_iterations = 250
-SimulatedAnnealing_tune = False
-SA_tune_iterations = 30
-SimulatedAnnealing = True
-sa_iterations = 250
-Random = False
-
-Visualize = True
-experiment = True
-experiment_duration = 3600
-iterations = 10
-
-"""
-sampling for chip0,1 
-if chip 0 volledige -> kies astar
-"""
 

@@ -1,3 +1,14 @@
+"""
+main.py
+
+Chippies
+Julius Knops, Deniz Mermer, Hidde Brenninkmeijer
+Algoritmen & Heuristieken
+
+Main file that executes the correct functions given by user 
+input in config.py
+"""
+
 from code.algorithms import Astar
 from code.algorithms import dijkstra
 from code.algorithms import hillclimber as hc
@@ -22,36 +33,31 @@ import csv
 import json
 
 if __name__ == "__main__":
-    chip_nr = 0 # loopt van 0 tot en met 2
-    netlist_nr = 3 # loopt van 1 tot en met 3
+    # chip_nr = config.chip_nr # loopt van 0 tot en met 2
+    # netlist_nr = config.netlist_nr # loopt van 1 tot en met 3
     
-    netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-    print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-    netlists = netlist.Netlist(netlist_file, print_file)
+    # netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
+    # print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
+    # netlists = netlist.Netlist(netlist_file, print_file)
 
-    if config.Random:
+    if config.RandomAlgorithm:
         if config.experiment:
-            start = time.time()
-            while time.time() - start < config.experiment_duration:
-                for i in range(config.iterations):
-                    
-                    if time.time() - start < config.experiment_duration:
-                        break
+            for i in range(config.iterations):
+                
+                solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(config.Astar_netlist)
+                
+                with open(f'chip_{config.chip_nr}_{config.netlist_nr}.csv', 'a', encoding='UTF8') as f:
+                    writer = csv.writer(f)
+                    for row in [[solution_cost, solution_connections]]:
+                        writer.writerow(row)
+                
 
-                    solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
-                    
-                    with open(f'chip_{chip_nr}_{netlist_nr}.csv', 'a', encoding='UTF8') as f:
-                        writer = csv.writer(f)
-                        for row in [[solution_cost, solution_connections]]:
-                            writer.writerow(row)
-                break
+            visualisation.create_histogram(config.chip_nr, config.netlist_nr)
 
-            visualisation.create_histogram(chip_nr, netlist_nr)
-
-        solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(netlists)
+        solution_cost, solution_connections, solution_gates = random_algo.get_randomize_solution(config.Astar_netlist)
 
         if config.Visualize:
-            visualisation.visualisation(solution_connections, solution_gates, chip_nr)
+            visualisation.visualisation(solution_connections, solution_gates, config.chip_nr)
     
     if config.Astar_full_implementation:
         best_solution = PA_util.PathFinder_Aster_util.find_cheapest_path( config.Astar_netlist, 
@@ -86,16 +92,10 @@ if __name__ == "__main__":
         tune_results = sa.SimulatedAnnealing.get_tune_results(
                                                             config.Astar_netlist, 
                                                             [16384, 3600, 512], 
-                                                            [.975, .96, .9, .75, .5], 
+                                                            [.9, .75, .5], 
                                                             iterations = config.SA_tune_iterations)
         get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(tune_results)
         print(get_best_tuned_result)
-        tune = {}
-        tune["Results"] = tune_results
-        tune["Best_Result"] = get_best_tuned_result
-        fn = "Tuning_result_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
-        with open(fn, "w") as outfile:
-            json.dump(tune_results, outfile)
 
     if config.SimulatedAnnealing:
         solutions = {}
