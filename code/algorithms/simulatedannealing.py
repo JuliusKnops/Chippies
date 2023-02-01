@@ -71,7 +71,7 @@ class SimulatedAnnealing(HillClimber):
         """
         self.current_temperature = self.current_temperature * self.alpha
 
-    def evaluate_result(self, current_cost: int, new_cost: int) -> None:
+    def evaluate_result(self, current_cost: int, new_cost: int) -> bool:
         new_value = new_cost
         old_value = current_cost
         
