@@ -53,7 +53,7 @@ y_max: int = 12
 connections_max: int = 7
 
 # Random algorithm parameter
-RandomAlgorithm: bool = False
+RandomAlgorithm: bool = True
 hardstuck = 100
 loopstuck = 10000
 
