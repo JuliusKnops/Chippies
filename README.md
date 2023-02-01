@@ -19,6 +19,7 @@ Je kan de main functie aanroepen met:
 python main.py
 ```
 Voor gebruik van main.py kan je kiezen uit verschillende algoritmes. Dit verander je in config.py
+
 ##### config.py
 ```python
 """Welk algoritme wil je gebruiken?"""
@@ -48,16 +49,13 @@ Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en 
     - **/code/visualisation**: bevat functie voor 3d visualisatie van oplossing
 - **/data**: bevat alle databestanden van elke chip die nodig zijn om oplossing te genereren en te visualiseren
 
-## Testen
-
-template aanroep van main.py
-
-## aanpassingen
-
-config.py / command line arguments
-
-## Dankbetuiging
-thx
+## Algoritmes
+-   Dijkstra algoritme: algoritme dat het kortste pad vind door 
+-   Astar algoritme: algoritme vergelijkbaar met 
+-   Genetic algoritme: algoritme dat nieuwe generaties van oplossingen genereerd doormiddel van kruisingen en mutaties. 
+-   Hillclimber algoritme: 
+-   Random algoritme: algoritme dat random pad kiest voor oplossing
+-   Simulated Annealing algoritme: 
 
 ## Auteurs
 
