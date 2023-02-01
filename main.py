@@ -18,7 +18,8 @@ from code.algorithms import genetic
 from code.algorithms import move_random
 from code.algorithms import random_algo
 
-from code.algorithms import PathFinder_Astar_Util as PA_util
+from code.algorithms.PathFinder_Astar_Util import ( PathFinder_Aster_util as 
+                                                    PA_util )
 
 from code.classes import gates
 from code.classes import netlist
@@ -34,7 +35,11 @@ import json
 
 if __name__ == "__main__":
 
-    config.Astar_netlist = netlist.Netlist(config.netlist_file, config.print_file)
+    config.netlist_file = ( f"data/chip_{config.chip_nr}/netlist_"+
+                    f"{config.netlist_nr + 3 * config.chip_nr}.csv" )
+    config.print_file = f"data/chip_{config.chip_nr}/print_{config.chip_nr}.csv"
+    config.Astar_netlist = netlist.Netlist( config.netlist_file, 
+                                            config.print_file)
 
     if config.RandomAlgorithm:
         if config.experiment:
@@ -56,49 +61,59 @@ if __name__ == "__main__":
             visualisation.visualisation(solution_connections, solution_gates, config.chip_nr)
     
     if config.Astar_full_implementation:
-        best_solution = PA_util.PathFinder_Aster_util.find_cheapest_path( config.Astar_netlist, 
-                                                    PathFinder=Astar.PathFinder_Astar, 
-                                                    Node=Astar.Node_Astar)
-        fn = "Astar_best_solution_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+        best_solution = PA_util.find_cheapest_path(
+                                            config.Astar_netlist, 
+                                            PathFinder = Astar.PathFinder_Astar, 
+                                            Node = Astar.Node_Astar)
+        fn = ("Astar_best_solution_"+str(config.chip_nr)+"_"+
+                str(config.netlist_nr)+".json")
         with open(fn, "w") as outfile:
             json.dump(best_solution, outfile)
 
     if config.Astar_sample:
         solutions = {}
-        fn = "Astar_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
-        for i in range(1000):
-            random_solution = PA_util.PathFinder_Aster_util.find_cheapest_path_from_sample(config.Astar_netlist, 
-                                                                                            PathFinder=Astar.PathFinder_Astar, 
-                                                                                            Node=Astar.Node_Astar, random_sample_max_iter = config.Astar_sample)
+        fn = ("Astar_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+
+                ".json")
+        for i in range(config.Astar_sample_generate_count):
+            random_solution = PA_util.find_cheapest_path_from_sample(
+                                    config.Astar_netlist, 
+                                    PathFinder=Astar.PathFinder_Astar, 
+                                    Node=Astar.Node_Astar, 
+                                    random_sample_max_iter = config.Astar_sample
+                                        )
             solutions[i] = random_solution
             with open(fn, "w") as outfile:
                 json.dump(solutions, outfile)
 
     if config.Hillclimber:
         solutions = {}
-        fn = "Hillclimber_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
-        for i in range(20):
+        fn = ( "Hillclimber_sample_"+str(config.chip_nr)+"_"+
+                str(config.netlist_nr)+".json" )
+        for i in range(config.hc_generate_count):
             hillclimber = hc.HillClimber(config.Astar_netlist)
             random_solution = hillclimber.run(iterations = config.hc_iterations)
             solutions[i] = random_solution
             with open(fn, "w") as outfile:
                 json.dump(solutions, outfile)
-
+    
     if config.SimulatedAnnealing_tune:
 
-        fn_r = "tune_results_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
-        fn_br = "best_tune_results"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+        fn_r = ("tune_results_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+
+                ".json")
+        fn_br = ("best_tune_results"+str(config.chip_nr)+"_"+
+                str(config.netlist_nr)+".json")
 
         all_tune_results = {}
         best_tune_results = {}
 
-        for i in range(config.SA_tune_attempts):
+        for i in range(config.sa_tune_generate_count):
             tune_results = sa.SimulatedAnnealing.generate_tune_results(
-                                                                config.Astar_netlist, 
-                                                                [16384, 3600, 512], 
-                                                                [.9, .75, .5], 
-                                                                iterations = config.SA_tune_iterations)
-            get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(tune_results)
+                                        config.Astar_netlist, 
+                                        [16384, 3600, 512], 
+                                        [.9, .96, .75, .5], 
+                                        iterations = config.sa_tune_iterations)
+            get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(
+                                                                tune_results)
             all_tune_results[i] = tune_results
             best_tune_results[i] = best_tune_results
             with open(fn_r, "w") as outfile:
@@ -107,51 +122,19 @@ if __name__ == "__main__":
             with open(fn_br, "w") as outfile:
                 json.dump(all_tune_results, outfile)
 
-        print(get_best_tuned_result)
-
     if config.SimulatedAnnealing:
         solutions = {}
-        fn = "SimulatedAnnealing_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
-        for i in range(25):
-            simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 16384, "geometric", alpha = .96)
-            random_solution = simulated_annealing.run(iterations=config.sa_iterations)
+        fn = ( "SimulatedAnnealing_sample_"+str(config.chip_nr)+"_"+
+                str(config.netlist_nr)+".json" )
+        for i in range(config.sa_generate_count):
+            simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 
+                                                        16384, "geometric", 
+                                                        alpha = .96)
+            random_solution = simulated_annealing.run(
+                                                iterations=config.sa_iterations)
             solutions[i] = random_solution
             with open(fn, "w") as outfile:
                 json.dump(solutions, outfile)
-        
-
-
-    # chip_nr = 0 # loopt van 0 tot en met 2
-    # netlist_nr = 3 # loopt van 1 tot en met 3
-    
-    # netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-    # print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-    
-    # netlists = netlist.Netlist(netlist_file, print_file)
-    
-    
-    # # print(random_algo.get_randomize_solution(netlists))
-
-    # print(genetic.create_new_pop(netlists))
-
-    # netlist_nr = 1
-    # for chip_nr in range(3):
-    #     netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr + 3 * chip_nr}.csv"
-    #     print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-    #     netlists = netlist.Netlist(netlist_file, print_file)
-    #     found_solution, found_cost = random_algo.get_randomize_solution(netlists)
-
-    #     header = ['solution']
-    #     with open(f'chip_{chip_nr}.csv', 'w', encoding='UTF8') as f:
-    #         writer = csv.writer(f)
-    #         writer.writerow(header)
-    #         # for row in found_solution:
-    #         writer.writerow([found_cost])
-    #         writer.writerow([found_solution])
-        
-    #     print(f"SOLVED {chip_nr}")
-
-
 
 
     """
