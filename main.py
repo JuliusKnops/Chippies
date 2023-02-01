@@ -34,6 +34,8 @@ import json
 
 if __name__ == "__main__":
 
+    config.Astar_netlist = netlist.Netlist(config.netlist_file, config.print_file)
+
     if config.RandomAlgorithm:
         if config.experiment:
             for i in range(config.iterations):
@@ -63,41 +65,57 @@ if __name__ == "__main__":
 
     if config.Astar_sample:
         solutions = {}
+        fn = "Astar_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
         for i in range(1000):
             random_solution = PA_util.PathFinder_Aster_util.find_cheapest_path_from_sample(config.Astar_netlist, 
                                                                                             PathFinder=Astar.PathFinder_Astar, 
                                                                                             Node=Astar.Node_Astar, random_sample_max_iter = config.Astar_sample)
             solutions[i] = random_solution
-            fn = "Astar_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
             with open(fn, "w") as outfile:
                 json.dump(solutions, outfile)
 
     if config.Hillclimber:
         solutions = {}
+        fn = "Hillclimber_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
         for i in range(20):
             hillclimber = hc.HillClimber(config.Astar_netlist)
             random_solution = hillclimber.run(iterations = config.hc_iterations)
             solutions[i] = random_solution
-            fn = "Hillclimber_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
             with open(fn, "w") as outfile:
                 json.dump(solutions, outfile)
 
     if config.SimulatedAnnealing_tune:
-        tune_results = sa.SimulatedAnnealing.get_tune_results(
-                                                            config.Astar_netlist, 
-                                                            [16384, 3600, 512], 
-                                                            [.9, .75, .5], 
-                                                            iterations = config.SA_tune_iterations)
-        get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(tune_results)
+
+        fn_r = "tune_results_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+        fn_br = "best_tune_results"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
+
+        all_tune_results = {}
+        best_tune_results = {}
+
+        for i in range(config.SA_tune_attempts):
+            tune_results = sa.SimulatedAnnealing.generate_tune_results(
+                                                                config.Astar_netlist, 
+                                                                [16384, 3600, 512], 
+                                                                [.9, .75, .5], 
+                                                                iterations = config.SA_tune_iterations)
+            get_best_tuned_result = sa.SimulatedAnnealing.get_best_tuned_result(tune_results)
+            all_tune_results[i] = tune_results
+            best_tune_results[i] = best_tune_results
+            with open(fn_r, "w") as outfile:
+                json.dump(all_tune_results, outfile)
+
+            with open(fn_br, "w") as outfile:
+                json.dump(all_tune_results, outfile)
+
         print(get_best_tuned_result)
 
     if config.SimulatedAnnealing:
         solutions = {}
+        fn = "SimulatedAnnealing_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
         for i in range(25):
             simulated_annealing = sa.SimulatedAnnealing(config.Astar_netlist, 16384, "geometric", alpha = .96)
             random_solution = simulated_annealing.run(iterations=config.sa_iterations)
             solutions[i] = random_solution
-            fn = "SimulatedAnnealing_sample_"+str(config.chip_nr)+"_"+str(config.netlist_nr)+".json"
             with open(fn, "w") as outfile:
                 json.dump(solutions, outfile)
         
