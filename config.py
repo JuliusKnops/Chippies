@@ -12,12 +12,11 @@ algorithm or heuristic is used to solve the netlist problem
 ###
 # Chip and netlist number to solve for
 ###
-from code.classes import netlist
-chip_nr: int = 1 
-netlist_nr: int = 4
-netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr}.csv"
-print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
-Astar_netlist = netlist.Netlist(netlist_file, print_file)
+chip_nr: int = 0 # loopt van 0 tot en met 2
+netlist_nr: int = 1 # loopt van 1 tot en met 3
+netlist_file = None
+print_file = None
+Astar_netlist = None
 
 """
 Choose which Heuristic / Algorithm you want to use to solve the problem
@@ -30,19 +29,30 @@ iterations is number of iterations used in experiment
 
 # A* parameters
 Astar_full_implementation: bool = False 
-Astar_sample: int = 1
+Astar_sample_generate_count: int = 10
+Astar_sample: int = 0
 
 # Hillclimber parameters
 Hillclimber: bool = False
+hc_generate_count: int = 25
 hc_iterations: int = 250 
 
 # Simulated Annealing parameters
 SimulatedAnnealing_tune: bool = False 
-SA_tune_iterations: int = 30 
-SimulatedAnnealing: bool = False 
-sa_iterations: int = 100 
+sa_tune_iterations: int = 30
+sa_tune_generate_count: int = 25
+SimulatedAnnealing: bool = False
+sa_generate_count: int = 25
+sa_iterations: int = 100
 
-# Random algorithm paramater
+# random netlist parameters
+random_netlist: bool = False
+gates_max: int = 7
+x_max: int = 12
+y_max: int = 12
+connections_max: int = 7
+
+# Random algorithm parameter
 RandomAlgorithm: bool = False
 hardstuck = 100
 loopstuck = 10000
