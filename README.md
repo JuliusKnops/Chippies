@@ -3,7 +3,7 @@ Chips zijn overal te vinden zoals in je lapotop of telefoon die veel verschillen
 \
 In deze case is het de bedoeling om van de gegeven gates en netlist een optimale oplossing te vinden. Dit lijkt misschien makkelijk echter is het een zeer complex probleem. Met behulp van algoritmes en heuristieken proberen we de beste oplossingen te vinden voor de chips. 
 
-![This is an image](/Eigenaar/Documents/heuristiek_algoritme/Chippies/Chippies/docs/Example_visualisation.png)
+![This is an image](/docs/Example_visualisation.png)
 ## Vereisten
 
 De gebruikte versie van Python voor deze codebase is Python 3.7. In het bestand requirements.txt staan benodigde libraries, met bijbehorende versies, die geïnstalleerd moeten worden. Dit is nodig om de code zonder problemen te laten draaien. Het installeren van de libraries kunnen via de volgende pip commando uitgevoerd worden.
