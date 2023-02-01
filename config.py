@@ -13,8 +13,8 @@ algorithm or heuristic is used to solve the netlist problem
 # Chip and netlist number to solve for
 ###
 from code.classes import netlist
-chip_nr: int = 0 
-netlist_nr: int = 1
+chip_nr: int = 1 
+netlist_nr: int = 4
 netlist_file = f"data/chip_{chip_nr}/netlist_{netlist_nr}.csv"
 print_file = f"data/chip_{chip_nr}/print_{chip_nr}.csv"
 Astar_netlist = netlist.Netlist(netlist_file, print_file)
@@ -30,7 +30,7 @@ iterations is number of iterations used in experiment
 
 # A* parameters
 Astar_full_implementation: bool = False 
-Astar_sample: int = 0 
+Astar_sample: int = 1
 
 # Hillclimber parameters
 Hillclimber: bool = False
@@ -43,7 +43,7 @@ SimulatedAnnealing: bool = False
 sa_iterations: int = 100 
 
 # Random algorithm paramater
-RandomAlgorithm: bool = True 
+RandomAlgorithm: bool = False
 
 # General settings
 Visualize: bool = True 
