@@ -25,7 +25,8 @@ class Netlist():
         #########################################################
         self.used_connections = set()
         self.used_nodes = set()
-        self.gate_locations = set([(int(g.x), int(g.y), g.z) for g in self.gates.values()])
+        self.gate_locations = set([(int(g.x), int(g.y), g.z) for \
+                                        g in self.gates.values()])
 
         self.k = 0
         self.n = 0
@@ -37,7 +38,8 @@ class Netlist():
         ###############################
 
 
-    # reads the print.csv file and creates the gate objects with given coordinates
+    # reads the print.csv file and creates the gate objects with 
+    # given coordinates
     def load_gates(self, sourcefile: str) -> dict:
         gates = {}
 
@@ -138,7 +140,8 @@ class Netlist():
 
     # calculates the minimum dimension of the chip.
     def get_dimensions(self) -> tuple:
-    # dimensies ook mogelijk als parameter invoeren wanneer netlist class aangemaakt word
+    # dimensies ook mogelijk als parameter invoeren wanneer netlist class 
+    # aangemaakt word
     # standaard x, y en z op 0 zetten, tenzij die als parameters worden meegeven
         x_max = 0
         y_max = 0
@@ -177,9 +180,6 @@ class Netlist():
     def set_solution(self, solution):
         self.solution = solution
 
-    # self.solution is de huidige oplossing van het pad met begin gates en eind gates erin
-    # dit kan ook vervangen worden voor een lijst waarin deze niet standaard in zitten, dus
-    # dan is het gelijk len(self.solution) - len(set(self.solution)) kunnen returnen
     def count_crossings(self) -> int:
         crossing = []
         for path in self.solution:
@@ -217,4 +217,5 @@ class Netlist():
         self.used_connections = set()
         self.n = 0
         self.k = 0
-        self.gate_locations = set([(int(g.x), int(g.y), g.z) for g in self.gates.values()])
+        self.gate_locations = set([(int(g.x), int(g.y), g.z) for \
+                                        g in self.gates.values()])
