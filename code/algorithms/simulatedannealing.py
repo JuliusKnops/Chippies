@@ -106,7 +106,7 @@ class SimulatedAnnealing(HillClimber):
         Tries Linear, fastDecrease and geometric with each alpha in alphas list
         on all temperates and returns the result.
         """
-        print(iterations)
+        
         if not (temperatures or alphas):
             raise Exception("Temperature or Alpha sequence must not be empty.")
         
