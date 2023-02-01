@@ -6,7 +6,7 @@ import more_itertools as mit
 from .gates import Gates
 
 class Netlist():
-    def __init__(self, netlist_sourcefile, print_sourcefile):
+    def __init__(self, netlist_sourcefile: str, print_sourcefile: str):
 
         if config.random_netlist:
             self.gates = self.get_random_gates()
