@@ -49,6 +49,8 @@ Astar_sample: int = 0
 Hillclimber: bool = False
 hc_generate_count: int = 25
 hc_iterations: int = 250
+
+### More options in config.py available ###
 ```
 ## Structuur
 
