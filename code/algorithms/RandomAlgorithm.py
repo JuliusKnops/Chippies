@@ -1,5 +1,5 @@
 """
-Random_Algorithm.py
+RandomAlgorithm.py
 
 Chippies
 Julius Knops, Deniz Mermer, Hidde Brenninkmeijer
