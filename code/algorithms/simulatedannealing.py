@@ -147,5 +147,5 @@ class SimulatedAnnealing(HillClimber):
                 if r[1] < winner[1]:
                     first_key = k
                     second_key = vk
-                    winner = a[first_key][second_key]
+                    winner = tune_results[first_key][second_key]
         return first_key, second_key, winner
