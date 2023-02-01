@@ -63,8 +63,6 @@ class HillClimber(object):
         
         # find first random solution
         current_path, current_cost = PA_util.get_solution(self.netlist)
-            
-        # print(current_cost)
         
         i = 0
         
@@ -99,7 +97,6 @@ class HillClimber(object):
                     if accept_new_child:
                         self.current_connection_order = new_child
                         current_path, current_cost = new_path, new_cost
-                        # print(new_cost)
                         break
                     
 
