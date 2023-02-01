@@ -60,6 +60,9 @@ class HillClimber(object):
         """
         # reset netlist before running
         self.netlist.reset()
+
+        # used for sa compability
+        self.iterations = iterations
         
         # find first random solution
         current_path, current_cost = PA_util.get_random_solution(self.netlist)
