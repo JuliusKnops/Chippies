@@ -100,12 +100,13 @@ class SimulatedAnnealing(HillClimber):
         return random.random() < probability  
     
     @classmethod
-    def get_tune_results(cls, netlist: object, temperatures: list, alphas: list,
-                            iterations = 50) -> defaultdict:
+    def generate_tune_results(cls, netlist: object, temperatures: list, 
+                            alphas: list, iterations = 50) -> defaultdict:
         """
         Tries Linear, fastDecrease and geometric with each alpha in alphas list
         on all temperates and returns the result.
         """
+        
         if not (temperatures or alphas):
             raise Exception("Temperature or Alpha sequence must not be empty.")
         
@@ -146,5 +147,5 @@ class SimulatedAnnealing(HillClimber):
                 if r[1] < winner[1]:
                     first_key = k
                     second_key = vk
-                    winner = a[first_key][second_key]
+                    winner = tune_results[first_key][second_key]
         return first_key, second_key, winner
