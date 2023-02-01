@@ -50,12 +50,12 @@ Hier volgt een lijst met mappen en files met een beschrijving van de inhoud, en 
 - **/data**: bevat alle databestanden van elke chip die nodig zijn om oplossing te genereren en te visualiseren
 
 ## Algoritmes
--   Dijkstra algoritme: algoritme dat het kortste pad vind door 
--   Astar algoritme: algoritme vergelijkbaar met 
--   Genetic algoritme: algoritme dat nieuwe generaties van oplossingen genereerd doormiddel van kruisingen en mutaties. 
--   Hillclimber algoritme: 
--   Random algoritme: algoritme dat random pad kiest voor oplossing
--   Simulated Annealing algoritme: 
+-   **Dijkstra algoritme**: algoritme dat het kortste pad vind door 
+-   **Astar**: algoritme vergelijkbaar met 
+-   **Genetic**: algoritme dat nieuwe generaties van oplossingen genereerd doormiddel van kruisingen en mutaties. 
+-   **Hillclimber**: 
+-   **Random**: algoritme dat random pad kiest voor oplossing
+-   **Simulated Annealing**: 
 
 ## Auteurs
 
