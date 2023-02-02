@@ -47,7 +47,7 @@ class PathFinder_Astar(object):
         if auto_pathfind:
             self.path, self.cost = self.astar(Node = Node)
 
-    def astar(self, Node = Node_Astar) -> None:
+    def astar(self, Node = Node_Astar) -> tuple:
         """
         If Astar node, calculates most promising node using heuristics.
         Else, uses dijkstra. Astar can be converted to dijkstra if the used
